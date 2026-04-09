@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMNIcheck SPC Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+.header { background: #1a1a2e; color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+.header h1 { font-size: 22px; font-weight: 600; }
+.header .subtitle { font-size: 13px; color: #888; }
+.controls { background: white; padding: 15px 30px; border-bottom: 1px solid #ddd; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.controls label { font-size: 13px; font-weight: 600; color: #666; }
+.controls select, .controls .btn-group button {
+  padding: 6px 14px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px;
+  background: white; cursor: pointer;
+}
+.btn-group { display: inline-flex; }
+.btn-group button { border-radius: 0; border-right: none; }
+.btn-group button:first-child { border-radius: 4px 0 0 4px; }
+.btn-group button:last-child { border-radius: 0 4px 4px 0; border-right: 1px solid #ccc; }
+.btn-group button.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+.summary { background: white; padding: 15px 30px; border-bottom: 1px solid #ddd; display: flex; gap: 40px; }
+.summary .stat { text-align: center; }
+.summary .stat .val { font-size: 24px; font-weight: 700; }
+.summary .stat .lbl { font-size: 12px; color: #888; }
+.summary .stat.ooc .val { color: #F44336; }
+.section { padding: 20px 30px; }
+.section h2 { font-size: 16px; margin-bottom: 15px; color: #555; border-bottom: 2px solid #1a1a2e; padding-bottom: 5px; }
+.chart-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(580px, 1fr)); gap: 15px; }
+.chart-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+.chart-card .chart-title { padding: 10px 15px; font-size: 13px; font-weight: 600; background: #fafafa; border-bottom: 1px solid #eee; }
+.chart-card .chart-container { height: 280px; }
+.chart-card .mr-container { height: 150px; border-top: 1px solid #eee; }
+.legend { display: flex; gap: 15px; padding: 10px 30px; background: white; border-bottom: 1px solid #ddd; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+.legend-item .swatch { width: 14px; height: 14px; border-radius: 3px; }
+.legend-item .line { width: 20px; height: 0; border-top: 2px; }
+.tech-filter { display: flex; align-items: center; gap: 10px; }
+.tech-checkboxes { display: flex; gap: 12px; flex-wrap: wrap; }
+.tech-checkboxes label { display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; }
+.tech-checkboxes input { cursor: pointer; }
+.tab-bar { display: flex; background: #1a1a2e; padding: 0 30px; }
+.tab-bar button { background: none; border: none; color: #888; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
+.tab-bar button.active { color: white; border-bottom-color: #4FC3F7; }
+.tab-bar button:hover { color: #ccc; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tech-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tech-table th { background: #fafafa; padding: 8px 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; }
+.tech-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+.tech-table tr:hover { background: #f9f9f9; }
+.tech-table .low-n { color: #FF9800; font-style: italic; }
+.low-n-note { font-size: 12px; color: #888; margin: 10px 0 15px; }
+.cpk-row { display: flex; gap: 10px; padding: 15px 30px; background: white; border-bottom: 1px solid #ddd; flex-wrap: wrap; }
+.cpk-card { flex: 0 0 120px; padding: 10px; border-radius: 6px; text-align: center; color: white; }
+.cpk-card .cpk-val { font-size: 20px; font-weight: 700; }
+.cpk-card .cpk-lbl { font-size: 10px; opacity: 0.9; margin-top: 2px; }
+.cpk-green { background: #4CAF50; }
+.cpk-amber { background: #FFC107; color: #333; }
+.cpk-red { background: #F44336; }
+.cpk-na { background: #E0E0E0; color: #666; }
+.cpk-header { font-size: 13px; font-weight: 600; color: #666; align-self: center; margin-right: 5px; }
+.throughput-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 15px; }
+.throughput-card .chart-container { height: 250px; }
+.pareto-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+.pareto-card .chart-container { height: 300px; }
+.grr-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+.grr-table th { background: #fafafa; padding: 8px 10px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #555; }
+.grr-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+.grr-ok { color: #4CAF50; font-weight: 600; }
+.grr-marginal { color: #FFC107; font-weight: 600; }
+.grr-bad { color: #F44336; font-weight: 600; }
+@media print {
+  .controls, .tab-bar, .tech-filter, #printBtn { display: none !important; }
+  .tab-content { display: block !important; }
+  .header { padding: 10px 20px; }
+  .section { padding: 10px 20px; page-break-inside: avoid; }
+  .chart-grid { grid-template-columns: 1fr 1fr; }
+  .chart-card { break-inside: avoid; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>OMNIcheck SPC Dashboard</h1>
+    <div class="subtitle">Statistical Process Control — Final Inspection Metrics</div>
+  </div>
+  <div style="text-align:right;display:flex;align-items:center;gap:15px">
+    <button id="printBtn" onclick="window.print()" style="padding:6px 14px;border:1px solid #555;border-radius:4px;background:transparent;color:white;cursor:pointer;font-size:12px">Print / Export</button>
+    <div>
+      <div style="font-size:14px;font-weight:600">ATOR Labs</div>
+      <div style="font-size:11px;color:#888">Generated 2026-04-09</div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-bar" id="tabBar">
+  <button class="active" data-tab="spc">SPC Charts</button>
+  <button data-tab="tech">Technician Analysis</button>
+</div>
+
+<div class="tab-content active" id="tab-spc">
+
+<div class="controls">
+  <div>
+    <label>Time Window</label>&nbsp;
+    <span class="btn-group" id="timeButtons">
+      <button class="active" data-window="all">All Time</button>
+      <button data-window="yearly">Yearly</button>
+      <button data-window="quarterly">Quarterly</button>
+      <button data-window="monthly">Monthly</button>
+    </span>
+  </div>
+  <div>
+    <label>Configuration</label>&nbsp;
+    <select id="configFilter">
+      <option value="all">All Types</option>
+      <option value="ATOR Labs">ATOR Labs</option><option value="AVON">AVON</option><option value="MSA Firetech">MSA Firetech</option>
+    </select>
+  </div>
+  <div class="tech-filter">
+    <label>Technician</label>
+    <div class="tech-checkboxes" id="techCheckboxes">
+      <label><input type="checkbox" value="Jake Cornman" checked> Jake Cornman</label><label><input type="checkbox" value="Rob Moran" checked> Rob Moran</label><label><input type="checkbox" value="Sieggy Bennicoff Yundt" checked> Sieggy Bennicoff Yundt</label>
+    </div>
+  </div>
+</div>
+
+<div class="summary">
+  <div class="stat"><div class="val" id="sumUnits">37</div><div class="lbl">Units</div></div>
+  <div class="stat"><div class="val" id="sumRange">2025-10-01 to 2026-03-30</div><div class="lbl">Date Range</div></div>
+  <div class="stat ooc"><div class="val" id="sumBeyond">0</div><div class="lbl">Beyond Limits</div></div>
+  <div class="stat"><div class="val" id="sumRun" style="color:#FFC107">0</div><div class="lbl">Run Rule Flags</div></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="swatch" style="background:#9C27B0"></div>ATOR Labs</div><div class="legend-item"><div class="swatch" style="background:#4CAF50"></div>AVON</div><div class="legend-item"><div class="swatch" style="background:#2196F3"></div>MSA Firetech</div>
+  <div class="legend-item"><div style="width:20px;border-top:2px solid #9E9E9E"></div>Center (X̄)</div>
+  <div class="legend-item"><div style="width:20px;border-top:2px dashed #F44336"></div>UCL/LCL (3σ)</div>
+  <div class="legend-item"><div style="width:20px;border-top:2px dotted #FF9800"></div>Spec Limits (ISO 16900-5 / NFPA 1850)</div>
+  <div class="legend-item"><div class="swatch" style="background:#F44336;clip-path:polygon(50% 0%,0% 100%,100% 100%)"></div>Beyond Limits</div>
+  <div class="legend-item"><div class="swatch" style="background:#FFC107;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)"></div>Run Rule</div>
+</div>
+
+<div id="cpkRow" class="cpk-row"></div>
+
+<div class="section">
+  <h2>Production Throughput</h2>
+  <div class="throughput-card"><div class="chart-container" id="throughputChart"></div></div>
+</div>
+
+<div id="chartsContainer"></div>
+
+<div class="section">
+  <h2>OOC Pareto — Flags by Metric</h2>
+  <div class="pareto-card"><div class="chart-container" id="paretoChart"></div></div>
+</div>
+
+</div><!-- end tab-spc -->
+
+<div class="tab-content" id="tab-tech">
+  <div class="section">
+    <h2>Technician Comparison — Box Plots</h2>
+    <p class="low-n-note">Comparisons with fewer than 10 samples per technician are marked in amber and should be interpreted cautiously.</p>
+    <div class="chart-grid" id="techBoxPlots"></div>
+  </div>
+  <div class="section">
+    <h2>Technician Summary Table</h2>
+    <div id="techTableContainer"></div>
+  </div>
+  <div class="section">
+    <h2>Gauge R&R — Reproducibility (Technician Effect)</h2>
+    <p class="low-n-note">Shows what % of total measurement variation is attributable to technician differences. &lt;10% = acceptable, 10-30% = marginal, &gt;30% = unacceptable. Current data has uneven group sizes — interpret with caution.</p>
+    <div id="grrContainer"></div>
+  </div>
+</div><!-- end tab-tech -->
+
+<script>
+const CHARTS = [{"key": "wob_A_10", "label": "WOB @ 10 LPM (A)", "section": "Protocol A", "unit": "kPa", "usl": 0.06999999999999999, "lsl": null, "cpk": null, "values": [0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 0.06, "mr_bar": 0.0, "ucl_i": 0.06, "lcl_i": 0.06, "ucl_mr": 0.0, "sigma": 0.0, "mr_values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}, {"key": "wob_A_20", "label": "WOB @ 20 LPM (A)", "section": "Protocol A", "unit": "kPa", "usl": 0.24, "lsl": null, "cpk": 2.31, "values": [0.21, 0.21, 0.21, 0.21, 0.21, 0.21, 0.22, 0.22, 0.22, 0.21, 0.21, 0.21, 0.21, 0.21, 0.21, 0.21, 0.21, 0.21, 0.21, 0.22, 0.21, 0.21, 0.22, 0.21, 0.21, 0.22, 0.21, 0.22, 0.21, 0.22, 0.21, 0.21, 0.21, 0.22, 0.21, 0.22, 0.21], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 0.212703, "mr_bar": 0.004444, "ucl_i": 0.224523, "lcl_i": 0.200882, "ucl_mr": 0.01452, "sigma": 0.00394, "mr_values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.0, 0.01, 0.01, 0.0, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.0, 0.01, 0.01, 0.01, 0.01]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], ["rule2"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}, {"key": "wob_A_35", "label": "WOB @ 35 LPM (A)", "section": "Protocol A", "unit": "kPa", "usl": 0.65, "lsl": null, "cpk": 1.79, "values": [0.62, 0.61, 0.61, 0.61, 0.62, 0.61, 0.62, 0.62, 0.62, 0.61, 0.61, 0.61, 0.61, 0.61, 0.6, 0.61, 0.61, 0.62, 0.61, 0.62, 0.61, 0.61, 0.62, 0.62, 0.61, 0.62, 0.62, 0.62, 0.62, 0.63, 0.62, 0.61, 0.61, 0.63, 0.61, 0.64, 0.62], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 0.615676, "mr_bar": 0.007222, "ucl_i": 0.634884, "lcl_i": 0.596468, "ucl_mr": 0.023595, "sigma": 0.006403, "mr_values": [0.01, 0.0, 0.0, 0.01, 0.01, 0.01, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.0, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.0, 0.01, 0.01, 0.0, 0.0, 0.0, 0.01, 0.01, 0.01, 0.0, 0.02, 0.02, 0.03, 0.02]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule1"], []]}, {"key": "wob_A_50", "label": "WOB @ 50 LPM (A)", "section": "Protocol A", "unit": "kPa", "usl": 1.28, "lsl": null, "cpk": 1.06, "values": [1.23, 1.23, 1.23, 1.25, 1.26, 1.24, 1.22, 1.24, 1.25, 1.21, 1.22, 1.2, 1.23, 1.2, 1.23, 1.23, 1.22, 1.23, 1.24, 1.23, 1.24, 1.23, 1.23, 1.24, 1.24, 1.24, 1.26, 1.25, 1.24, 1.27, 1.25, 1.25, 1.25, 1.27, 1.23, 1.27, 1.25], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 1.237838, "mr_bar": 0.015, "ucl_i": 1.277731, "lcl_i": 1.197944, "ucl_mr": 0.049005, "sigma": 0.013298, "mr_values": [0.0, 0.0, 0.02, 0.01, 0.02, 0.02, 0.02, 0.01, 0.04, 0.01, 0.02, 0.03, 0.03, 0.03, 0.0, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.0, 0.01, 0.0, 0.0, 0.02, 0.01, 0.01, 0.03, 0.02, 0.0, 0.0, 0.02, 0.04, 0.04, 0.02]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], ["rule2"], ["rule2"], [], [], []]}, {"key": "wob_A_65", "label": "WOB @ 65 LPM (A)", "section": "Protocol A", "unit": "kPa", "usl": 2.12, "lsl": null, "cpk": 0.75, "values": [2.05, 2.03, 2.04, 2.07, 2.07, 2.04, 2.0, 2.05, 2.06, 1.97, 2.02, 1.96, 2.02, 1.95, 2.03, 2.02, 2.03, 2.01, 2.08, 2.03, 2.08, 2.05, 2.0, 2.06, 2.06, 2.03, 2.11, 2.06, 2.06, 2.09, 2.05, 2.08, 2.05, 2.09, 2.05, 2.09, 2.07], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 2.043514, "mr_bar": 0.038333, "ucl_i": 2.145464, "lcl_i": 1.941563, "ucl_mr": 0.125235, "sigma": 0.033983, "mr_values": [0.02, 0.01, 0.03, 0.0, 0.03, 0.04, 0.05, 0.01, 0.09, 0.05, 0.06, 0.06, 0.07, 0.08, 0.01, 0.01, 0.02, 0.07, 0.05, 0.05, 0.03, 0.05, 0.06, 0.0, 0.03, 0.08, 0.05, 0.0, 0.03, 0.04, 0.03, 0.03, 0.04, 0.04, 0.04, 0.02]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], ["rule2"], ["rule2"]]}, {"key": "wob_B_65", "label": "WOB @ 65 LPM (B)", "section": "Protocol B", "unit": "kPa", "usl": 0.65, "lsl": null, "cpk": 1.59, "values": [0.64, 0.64, 0.64, 0.61, 0.61, 0.64, 0.62, 0.62, 0.61, 0.63, 0.61, 0.62, 0.61, 0.63, 0.62, 0.61, 0.61, 0.61, 0.61, 0.61, 0.62, 0.62, 0.62, 0.61, 0.62, 0.62, 0.61, 0.61, 0.61, 0.62, 0.62, 0.62, 0.61, 0.62, 0.62, 0.62, 0.61], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 0.618378, "mr_bar": 0.0075, "ucl_i": 0.638325, "lcl_i": 0.598432, "ucl_mr": 0.024503, "sigma": 0.006649, "mr_values": [0.0, 0.0, 0.03, 0.0, 0.03, 0.02, 0.0, 0.01, 0.02, 0.02, 0.01, 0.01, 0.02, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.01, 0.01, 0.0, 0.01, 0.0, 0.0, 0.01, 0.0, 0.0, 0.01, 0.01, 0.0, 0.0, 0.01]}, "ooc_flags": [["rule1"], ["rule1"], ["rule1"], [], [], ["rule1"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}, {"key": "wob_B_85", "label": "WOB @ 85 LPM (B)", "section": "Protocol B", "unit": "kPa", "usl": 1.1, "lsl": null, "cpk": 2.39, "values": [1.1, 1.09, 1.09, 1.05, 1.05, 1.1, 1.06, 1.06, 1.05, 1.05, 1.05, 1.05, 1.04, 1.06, 1.05, 1.05, 1.04, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.06, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.06, 1.06, 1.05], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 1.055946, "mr_bar": 0.006944, "ucl_i": 1.074415, "lcl_i": 1.037477, "ucl_mr": 0.022688, "sigma": 0.006156, "mr_values": [0.01, 0.0, 0.04, 0.0, 0.05, 0.04, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01, 0.02, 0.01, 0.0, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.01]}, "ooc_flags": [["rule1"], ["rule1"], ["rule1"], [], [], ["rule1"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], ["rule2"], ["rule2"], [], [], [], [], [], [], [], [], ["rule2"], [], [], []]}, {"key": "wob_B_105", "label": "WOB @ 105 LPM (B)", "section": "Protocol B", "unit": "kPa", "usl": 1.6600000000000001, "lsl": null, "cpk": 3.09, "values": [1.65, 1.64, 1.64, 1.58, 1.58, 1.65, 1.59, 1.59, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.59, 1.58, 1.58, 1.58, 1.59, 1.58, 1.58, 1.58, 1.58, 1.59, 1.58, 1.59, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.59, 1.59, 1.58, 1.58], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 1.589189, "mr_bar": 0.008611, "ucl_i": 1.612091, "lcl_i": 1.566287, "ucl_mr": 0.028132, "sigma": 0.007634, "mr_values": [0.01, 0.0, 0.06, 0.0, 0.07, 0.06, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.0, 0.0, 0.01, 0.01, 0.0, 0.0, 0.0, 0.01, 0.01, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.0, 0.01, 0.0]}, "ooc_flags": [["rule1"], ["rule1"], ["rule1"], [], [], ["rule1"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}, {"key": "leak_delta", "label": "Leak Pressure Drop", "section": "Leak & Volume", "unit": "inWg", "usl": 0.4, "lsl": null, "cpk": 1.15, "values": [0.05, 0.08, 0.13, 0.3, 0.12, 0.14, 0.14, 0.14, 0.1, 0.08, 0.12, 0.09, 0.16, 0.13, 0.13, 0.16, 0.17, 0.21, 0.34, 0.13, 0.35, 0.27, 0.08, 0.19, 0.25, 0.19, 0.2, 0.17, 0.29, 0.26, 0.16, 0.18, 0.19, 0.36, 0.17, 0.2, 0.26], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 0.180811, "mr_bar": 0.071944, "ucl_i": 0.372152, "lcl_i": -0.010531, "ucl_mr": 0.235042, "sigma": 0.063781, "mr_values": [0.03, 0.05, 0.17, 0.18, 0.02, 0.0, 0.0, 0.04, 0.02, 0.04, 0.03, 0.07, 0.03, 0.0, 0.03, 0.01, 0.04, 0.13, 0.21, 0.22, 0.08, 0.19, 0.11, 0.06, 0.06, 0.01, 0.03, 0.12, 0.03, 0.1, 0.02, 0.01, 0.17, 0.19, 0.03, 0.06]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], ["rule2"], ["rule2"], ["rule2"], ["rule2"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}, {"key": "vol_nfpa40", "label": "NFPA 40 Tidal Volume", "section": "Leak & Volume", "unit": "L", "usl": 1.765, "lsl": 1.565, "cpk": 4.09, "values": [1.68, 1.658, 1.665, 1.659, 1.665, 1.658, 1.673, 1.672, 1.679, 1.676, 1.669, 1.661, 1.658, 1.663, 1.654, 1.662, 1.661, 1.674, 1.655, 1.67, 1.665, 1.654, 1.664, 1.659, 1.659, 1.664, 1.655, 1.667, 1.665, 1.68, 1.669, 1.665, 1.659, 1.673, 1.663, 1.687, 1.663], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 1.665486, "mr_bar": 0.009139, "ucl_i": 1.689792, "lcl_i": 1.641181, "ucl_mr": 0.029857, "sigma": 0.008102, "mr_values": [0.022, 0.007, 0.006, 0.006, 0.007, 0.015, 0.001, 0.007, 0.003, 0.007, 0.008, 0.003, 0.005, 0.009, 0.008, 0.001, 0.013, 0.019, 0.015, 0.005, 0.011, 0.01, 0.005, 0.0, 0.005, 0.009, 0.012, 0.002, 0.015, 0.011, 0.004, 0.006, 0.014, 0.01, 0.024, 0.024]}, "ooc_flags": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}, {"key": "vol_nfpa102", "label": "NFPA 102 Tidal Volume", "section": "Leak & Volume", "unit": "L", "usl": 3.5, "lsl": 3.3, "cpk": 2.86, "values": [3.468, 3.494, 3.468, 3.403, 3.383, 3.357, 3.414, 3.405, 3.399, 3.386, 3.399, 3.413, 3.403, 3.419, 3.414, 3.413, 3.408, 3.417, 3.393, 3.392, 3.392, 3.388, 3.405, 3.394, 3.395, 3.397, 3.399, 3.394, 3.401, 3.408, 3.402, 3.409, 3.404, 3.41, 3.403, 3.399, 3.394], "dates": ["2025-10-01", "2025-10-02", "2025-10-04", "2025-10-21", "2025-10-21", "2025-10-23", "2025-10-27", "2025-10-27", "2025-11-04", "2025-11-07", "2025-11-11", "2025-11-12", "2025-11-12", "2025-11-12", "2025-11-20", "2025-12-08", "2025-12-08", "2025-12-11", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2026-01-23", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-02-04", "2026-02-13", "2026-03-05", "2026-03-10", "2026-03-17", "2026-03-17", "2026-03-24", "2026-03-24", "2026-03-30", "2026-03-30"], "unit_ids": ["20251001OCS21", "20251002OCS23", "20250930OCS20", "20251001OCS22", "20251017OCB29", "20251022OCS25", "20251023OCA27", "20251023OCA28", "20251022OCS26", "20251104OCS31", "20251104OCS30", "20251022OCS34", "20251104OCS32", "20251104OCS33", "20251120OCS35", "20251205OCS36", "20251205OCS37", "20251205OCS38", "20251210OCA39", "20251211OCS42", "20251211OCS40", "20251211OCS44", "20260121OCS45", "20260121OCS46", "OC-10042024-13", "20260126OCS48", "20260126OCS49", "20260127OCB50", "20260121OCS47", "20260130OCS51", "20240221OCS7", "20260312OCSA53", "20260312OCSA54", "20251211OCS41", "20260312OCSA56", "20251211OCS43", "20260312OCSA52"], "configs": ["MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "AVON", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "AVON", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "MSA Firetech", "MSA Firetech", "MSA Firetech", "ATOR Labs", "ATOR Labs", "MSA Firetech", "ATOR Labs", "MSA Firetech", "ATOR Labs"], "technicians": ["Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Rob Moran", "Jake Cornman", "Sieggy Bennicoff Yundt", "Rob Moran", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Sieggy Bennicoff Yundt", "Jake Cornman", "Sieggy Bennicoff Yundt"], "stats": {"x_bar": 3.406541, "mr_bar": 0.012278, "ucl_i": 3.439194, "lcl_i": 3.373887, "ucl_mr": 0.040111, "sigma": 0.010885, "mr_values": [0.026, 0.026, 0.065, 0.02, 0.026, 0.057, 0.009, 0.006, 0.013, 0.013, 0.014, 0.01, 0.016, 0.005, 0.001, 0.005, 0.009, 0.024, 0.001, 0.0, 0.004, 0.017, 0.011, 0.001, 0.002, 0.002, 0.005, 0.007, 0.007, 0.006, 0.007, 0.005, 0.006, 0.007, 0.004, 0.005]}, "ooc_flags": [["rule1"], ["rule1"], ["rule1"], [], [], ["rule1"], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], ["rule2"], ["rule2"], ["rule2"], ["rule2"], [], [], [], [], [], [], [], []]}];
+const CONFIG_COLORS = {"MSA Firetech": "#2196F3", "AVON": "#4CAF50", "ATOR Labs": "#9C27B0"};
+const TECHNICIANS = ["Jake Cornman", "Rob Moran", "Sieggy Bennicoff Yundt"];
+const EVENTS = [{"date": "2026-03-12", "label": "OCSA Rev A introduced", "color": "#9C27B0"}];
+const DEFAULT_COLOR = '#999';
+
+let currentWindow = 'all';
+let currentConfig = 'all';
+let selectedTechs = new Set(TECHNICIANS);
+
+function getDateCutoff(window) {
+  const now = new Date();
+  switch(window) {
+    case 'monthly': return new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    case 'quarterly': return new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+    case 'yearly': return new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+    default: return new Date('2000-01-01');
+  }
+}
+
+function renderCharts() {
+  const container = document.getElementById('chartsContainer');
+  container.innerHTML = '';
+  const cutoff = getDateCutoff(currentWindow);
+
+  // Group by section
+  const sections = {};
+  CHARTS.forEach(c => {
+    if (!sections[c.section]) sections[c.section] = [];
+    sections[c.section].push(c);
+  });
+
+  let visibleUnits = 0;
+  let visibleBeyond = 0;
+  let visibleRun = 0;
+  const seenUnits = new Set();
+
+  for (const [sectionName, charts] of Object.entries(sections)) {
+    const secDiv = document.createElement('div');
+    secDiv.className = 'section';
+    secDiv.innerHTML = `<h2>${sectionName}</h2><div class="chart-grid" id="grid-${sectionName.replace(/\s/g,'_')}"></div>`;
+    container.appendChild(secDiv);
+    const grid = secDiv.querySelector('.chart-grid');
+
+    charts.forEach(chart => {
+      const card = document.createElement('div');
+      card.className = 'chart-card';
+
+      const titleSuffix = currentConfig !== 'all' ? ` — ${currentConfig}` : '';
+      card.innerHTML = `
+        <div class="chart-title">${chart.label} (${chart.unit})${titleSuffix}</div>
+        <div class="chart-container" id="i-${chart.key}"></div>
+        <div class="mr-container" id="mr-${chart.key}"></div>
+      `;
+      grid.appendChild(card);
+
+      // Filter data
+      const indices = [];
+      for (let i = 0; i < chart.values.length; i++) {
+        const d = new Date(chart.dates[i]);
+        const configOk = currentConfig === 'all' || chart.configs[i] === currentConfig;
+        const techOk = selectedTechs.has(chart.technicians[i]);
+        if (d >= cutoff && configOk && techOk) {
+          indices.push(i);
+        }
+      }
+
+      indices.forEach(i => {
+        seenUnits.add(chart.unit_ids[i]);
+        if (chart.ooc_flags[i] && chart.ooc_flags[i].length > 0) {
+          if (chart.ooc_flags[i].includes('rule1')) visibleBeyond++;
+          else visibleRun++;
+        }
+      });
+
+      const dates = indices.map(i => chart.dates[i]);
+      const vals = indices.map(i => chart.values[i]);
+      const colors = indices.map(i => CONFIG_COLORS[chart.configs[i]] || DEFAULT_COLOR);
+      const hoverText = indices.map(i =>
+        `${chart.unit_ids[i]}<br>Date: ${chart.dates[i]}<br>Tech: ${chart.technicians[i]}<br>Config: ${chart.configs[i]}<br>Value: ${chart.values[i]} ${chart.unit}`
+      );
+      const oocIdx = indices.map((origI, newI) => ({origI, newI})).filter(x => chart.ooc_flags[x.origI] && chart.ooc_flags[x.origI].length > 0);
+
+      // I-chart traces
+      const traces = [
+        // Data points
+        {
+          x: dates, y: vals, mode: 'markers', type: 'scatter',
+          marker: { color: colors, size: 8, line: { width: 1, color: '#fff' } },
+          text: hoverText, hoverinfo: 'text', name: 'Data',
+          showlegend: false,
+        },
+        // Center line
+        {
+          x: [dates[0], dates[dates.length-1]], y: [chart.stats.x_bar, chart.stats.x_bar],
+          mode: 'lines', line: { color: '#9E9E9E', width: 1.5 },
+          hoverinfo: 'skip', showlegend: false,
+        },
+        // UCL
+        {
+          x: [dates[0], dates[dates.length-1]], y: [chart.stats.ucl_i, chart.stats.ucl_i],
+          mode: 'lines', line: { color: '#F44336', width: 1.5, dash: 'dash' },
+          hoverinfo: 'skip', showlegend: false,
+        },
+        // LCL
+        {
+          x: [dates[0], dates[dates.length-1]], y: [chart.stats.lcl_i, chart.stats.lcl_i],
+          mode: 'lines', line: { color: '#F44336', width: 1.5, dash: 'dash' },
+          hoverinfo: 'skip', showlegend: false,
+        },
+      ];
+
+      // Spec limits (USL and/or LSL)
+      if (chart.usl !== null && chart.usl !== undefined) {
+        traces.push({
+          x: [dates[0], dates[dates.length-1]], y: [chart.usl, chart.usl],
+          mode: 'lines', line: { color: '#FF9800', width: 1.5, dash: 'dot' },
+          hoverinfo: 'skip', showlegend: false,
+        });
+      }
+      if (chart.lsl !== null && chart.lsl !== undefined) {
+        traces.push({
+          x: [dates[0], dates[dates.length-1]], y: [chart.lsl, chart.lsl],
+          mode: 'lines', line: { color: '#FF9800', width: 1.5, dash: 'dot' },
+          hoverinfo: 'skip', showlegend: false,
+        });
+      }
+
+      // OOC markers — split by severity
+      const beyondLimits = oocIdx.filter(x => chart.ooc_flags[x.origI].includes('rule1'));
+      const runRules = oocIdx.filter(x => !chart.ooc_flags[x.origI].includes('rule1'));
+
+      if (beyondLimits.length > 0) {
+        traces.push({
+          x: beyondLimits.map(x => dates[x.newI]),
+          y: beyondLimits.map(x => vals[x.newI]),
+          mode: 'markers', type: 'scatter',
+          marker: { color: '#F44336', size: 12, symbol: 'triangle-up', line: { width: 1, color: '#B71C1C' } },
+          hoverinfo: 'text', showlegend: false,
+          text: beyondLimits.map(x => `Beyond control limit`),
+        });
+      }
+
+      if (runRules.length > 0) {
+        traces.push({
+          x: runRules.map(x => dates[x.newI]),
+          y: runRules.map(x => vals[x.newI]),
+          mode: 'markers', type: 'scatter',
+          marker: { color: '#FFC107', size: 10, symbol: 'diamond', line: { width: 1, color: '#F57F17' } },
+          hoverinfo: 'text', showlegend: false,
+          text: runRules.map(x => {
+            const flags = chart.ooc_flags[x.origI];
+            const rules = [];
+            if (flags.includes('rule2')) rules.push('8 consecutive same side');
+            if (flags.includes('rule3')) rules.push('6 consecutive trending');
+            return `Run rule: ${rules.join(', ')}`;
+          }),
+        });
+      }
+
+      // Event annotations (vertical lines)
+      const eventShapes = [];
+      const eventAnnotations = [];
+      EVENTS.forEach(ev => {
+        const evDate = new Date(ev.date);
+        if (dates.length > 0 && evDate >= new Date(dates[0]) && evDate <= new Date(dates[dates.length-1])) {
+          eventShapes.push({
+            type: 'line', x0: ev.date, x1: ev.date, y0: 0, y1: 1, yref: 'paper',
+            line: { color: ev.color || '#666', dash: 'dot', width: 1.5 },
+          });
+          eventAnnotations.push({
+            x: ev.date, y: 0.97, yref: 'paper', text: ev.label,
+            showarrow: false, font: { size: 8, color: ev.color || '#666' },
+            yanchor: 'top', xanchor: 'left', textangle: 0, xshift: 4,
+          });
+        }
+      });
+
+      const iLayout = {
+        margin: { t: 5, b: 25, l: 55, r: 15 },
+        xaxis: { type: 'date', showgrid: false, tickfont: { size: 10 } },
+        yaxis: { title: { text: chart.unit, font: { size: 11 } }, tickfont: { size: 10 }, gridcolor: '#eee' },
+        plot_bgcolor: 'white',
+        hovermode: 'closest',
+        shapes: eventShapes,
+        annotations: eventAnnotations,
+      };
+
+      setTimeout(() => {
+        Plotly.newPlot(`i-${chart.key}`, traces, iLayout, { responsive: true, displayModeBar: false });
+      }, 0);
+
+      // MR chart
+      const mrDates = dates.slice(1);
+      const mrVals = [];
+      for (let i = 1; i < vals.length; i++) {
+        mrVals.push(Math.round(Math.abs(vals[i] - vals[i-1]) * 10000) / 10000);
+      }
+
+      const mrTraces = [
+        {
+          x: mrDates, y: mrVals, mode: 'markers+lines', type: 'scatter',
+          marker: { color: '#78909C', size: 5 }, line: { color: '#B0BEC5', width: 1 },
+          hoverinfo: 'y', showlegend: false,
+        },
+        // MR center
+        {
+          x: [mrDates[0], mrDates[mrDates.length-1]], y: [chart.stats.mr_bar, chart.stats.mr_bar],
+          mode: 'lines', line: { color: '#9E9E9E', width: 1 },
+          hoverinfo: 'skip', showlegend: false,
+        },
+        // MR UCL
+        {
+          x: [mrDates[0], mrDates[mrDates.length-1]], y: [chart.stats.ucl_mr, chart.stats.ucl_mr],
+          mode: 'lines', line: { color: '#F44336', width: 1, dash: 'dash' },
+          hoverinfo: 'skip', showlegend: false,
+        },
+      ];
+
+      const mrLayout = {
+        margin: { t: 5, b: 25, l: 55, r: 15 },
+        xaxis: { type: 'date', showgrid: false, tickfont: { size: 9 } },
+        yaxis: { title: { text: 'MR', font: { size: 10 } }, tickfont: { size: 9 }, gridcolor: '#eee' },
+        plot_bgcolor: 'white',
+      };
+
+      setTimeout(() => {
+        Plotly.newPlot(`mr-${chart.key}`, mrTraces, mrLayout, { responsive: true, displayModeBar: false });
+      }, 0);
+    });
+  }
+
+  // Update summary
+  visibleUnits = seenUnits.size;
+  document.getElementById('sumUnits').textContent = visibleUnits;
+  document.getElementById('sumBeyond').textContent = visibleBeyond;
+  document.getElementById('sumRun').textContent = visibleRun;
+
+  const filteredDates = [];
+  CHARTS[0].dates.forEach((d, i) => {
+    const dt = new Date(d);
+    if (dt >= cutoff && (currentConfig === 'all' || CHARTS[0].configs[i] === currentConfig)) {
+      filteredDates.push(d);
+    }
+  });
+  if (filteredDates.length > 0) {
+    document.getElementById('sumRange').textContent = `${filteredDates[0]} to ${filteredDates[filteredDates.length-1]}`;
+  }
+}
+
+function renderCpkCards() {
+  const row = document.getElementById('cpkRow');
+  row.innerHTML = '<span class="cpk-header">Cpk</span>';
+  CHARTS.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'cpk-card';
+    if (c.cpk === null || c.cpk === undefined) {
+      card.className += ' cpk-na';
+      card.innerHTML = `<div class="cpk-val">N/A</div><div class="cpk-lbl">${c.label.replace('WOB @ ','').replace(' Tidal Volume','')}</div>`;
+    } else {
+      const cls = c.cpk >= 1.33 ? 'cpk-green' : c.cpk >= 1.0 ? 'cpk-amber' : 'cpk-red';
+      card.className += ` ${cls}`;
+      card.innerHTML = `<div class="cpk-val">${c.cpk.toFixed(2)}</div><div class="cpk-lbl">${c.label.replace('WOB @ ','').replace(' Tidal Volume','')}</div>`;
+    }
+    row.appendChild(card);
+  });
+}
+
+function renderThroughput() {
+  // Group records by month and config type
+  const months = {};
+  const configSet = new Set();
+  CHARTS[0].dates.forEach((d, i) => {
+    const month = d.substring(0, 7); // YYYY-MM
+    const cfg = CHARTS[0].configs[i];
+    if (!months[month]) months[month] = {};
+    months[month][cfg] = (months[month][cfg] || 0) + 1;
+    configSet.add(cfg);
+  });
+
+  const sortedMonths = Object.keys(months).sort();
+  const traces = [];
+  Array.from(configSet).sort().forEach(cfg => {
+    traces.push({
+      x: sortedMonths,
+      y: sortedMonths.map(m => months[m][cfg] || 0),
+      name: cfg,
+      type: 'bar',
+      marker: { color: CONFIG_COLORS[cfg] || DEFAULT_COLOR },
+    });
+  });
+
+  const layout = {
+    margin: { t: 10, b: 40, l: 45, r: 15 },
+    barmode: 'stack',
+    xaxis: { title: { text: 'Month', font: { size: 11 } }, tickfont: { size: 10 } },
+    yaxis: { title: { text: 'Units', font: { size: 11 } }, tickfont: { size: 10 }, dtick: 1 },
+    plot_bgcolor: 'white',
+    legend: { orientation: 'h', y: -0.2 },
+  };
+
+  Plotly.newPlot('throughputChart', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+function renderPareto() {
+  // Count OOC by metric, split by type
+  const metrics = [];
+  CHARTS.forEach(c => {
+    let beyond = 0, run = 0;
+    c.ooc_flags.forEach(flags => {
+      if (flags && flags.length > 0) {
+        if (flags.includes('rule1')) beyond++;
+        else run++;
+      }
+    });
+    if (beyond + run > 0) {
+      metrics.push({ label: c.label.replace('WOB @ ','').replace(' Tidal Volume',''), beyond, run, total: beyond + run });
+    }
+  });
+
+  metrics.sort((a, b) => b.total - a.total);
+
+  const traces = [
+    {
+      y: metrics.map(m => m.label),
+      x: metrics.map(m => m.beyond),
+      name: 'Beyond Limits',
+      type: 'bar',
+      orientation: 'h',
+      marker: { color: '#F44336' },
+    },
+    {
+      y: metrics.map(m => m.label),
+      x: metrics.map(m => m.run),
+      name: 'Run Rules',
+      type: 'bar',
+      orientation: 'h',
+      marker: { color: '#FFC107' },
+    },
+  ];
+
+  const layout = {
+    margin: { t: 10, b: 40, l: 140, r: 15 },
+    barmode: 'stack',
+    xaxis: { title: { text: 'OOC Count', font: { size: 11 } }, tickfont: { size: 10 }, dtick: 1 },
+    yaxis: { tickfont: { size: 10 }, autorange: 'reversed' },
+    plot_bgcolor: 'white',
+    legend: { orientation: 'h', y: -0.15 },
+  };
+
+  Plotly.newPlot('paretoChart', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+// Event listeners
+document.getElementById('timeButtons').addEventListener('click', e => {
+  if (e.target.tagName === 'BUTTON') {
+    document.querySelectorAll('#timeButtons button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentWindow = e.target.dataset.window;
+    renderCharts();
+  }
+});
+
+document.getElementById('configFilter').addEventListener('change', e => {
+  currentConfig = e.target.value;
+  renderCharts();
+});
+
+document.getElementById('techCheckboxes').addEventListener('change', e => {
+  if (e.target.type === 'checkbox') {
+    if (e.target.checked) {
+      selectedTechs.add(e.target.value);
+    } else {
+      selectedTechs.delete(e.target.value);
+    }
+    renderCharts();
+  }
+});
+
+// Tab switching
+document.getElementById('tabBar').addEventListener('click', e => {
+  if (e.target.tagName === 'BUTTON') {
+    document.querySelectorAll('#tabBar button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${e.target.dataset.tab}`).classList.add('active');
+    if (e.target.dataset.tab === 'tech' && !techRendered) {
+      renderTechAnalysis();
+      techRendered = true;
+    }
+  }
+});
+
+let techRendered = false;
+
+const TECH_COLORS = {};
+const TECH_PALETTE = ['#26A69A', '#EF5350', '#5C6BC0', '#FFA726', '#66BB6A'];
+TECHNICIANS.forEach((t, i) => TECH_COLORS[t] = TECH_PALETTE[i % TECH_PALETTE.length]);
+
+const METRIC_DEFS = [
+  { key: 'wob_A_10', label: 'WOB A 10 LPM', unit: 'kPa' },
+  { key: 'wob_A_20', label: 'WOB A 20 LPM', unit: 'kPa' },
+  { key: 'wob_A_35', label: 'WOB A 35 LPM', unit: 'kPa' },
+  { key: 'wob_A_50', label: 'WOB A 50 LPM', unit: 'kPa' },
+  { key: 'wob_A_65', label: 'WOB A 65 LPM', unit: 'kPa' },
+  { key: 'wob_B_65', label: 'WOB B 65 LPM', unit: 'kPa' },
+  { key: 'wob_B_85', label: 'WOB B 85 LPM', unit: 'kPa' },
+  { key: 'wob_B_105', label: 'WOB B 105 LPM', unit: 'kPa' },
+  { key: 'leak_delta', label: 'Leak Pressure Drop', unit: 'inWg' },
+  { key: 'vol_nfpa40', label: 'NFPA 40 Volume', unit: 'L' },
+  { key: 'vol_nfpa102', label: 'NFPA 102 Volume', unit: 'L' },
+];
+
+function renderTechAnalysis() {
+  const grid = document.getElementById('techBoxPlots');
+  grid.innerHTML = '';
+
+  // Build per-tech data from CHARTS
+  // CHARTS[0] has all technician names aligned with values
+  METRIC_DEFS.forEach(metric => {
+    const chart = CHARTS.find(c => c.key === metric.key);
+    if (!chart) return;
+
+    const card = document.createElement('div');
+    card.className = 'chart-card';
+    card.innerHTML = `<div class="chart-title">${metric.label} (${metric.unit})</div><div class="chart-container" id="tech-${metric.key}"></div>`;
+    grid.appendChild(card);
+
+    const traces = [];
+    TECHNICIANS.forEach(tech => {
+      const vals = [];
+      for (let i = 0; i < chart.values.length; i++) {
+        if (chart.technicians[i] === tech) vals.push(chart.values[i]);
+      }
+      if (vals.length === 0) return;
+      traces.push({
+        y: vals,
+        type: 'box',
+        name: `${tech} (n=${vals.length})`,
+        marker: { color: TECH_COLORS[tech] },
+        boxpoints: 'all',
+        jitter: 0.4,
+        pointpos: 0,
+        hoverinfo: 'y+name',
+      });
+    });
+
+    const layout = {
+      margin: { t: 10, b: 40, l: 55, r: 15 },
+      yaxis: { title: { text: metric.unit, font: { size: 11 } }, tickfont: { size: 10 }, gridcolor: '#eee' },
+      xaxis: { tickfont: { size: 10 } },
+      plot_bgcolor: 'white',
+      showlegend: false,
+    };
+
+    setTimeout(() => {
+      Plotly.newPlot(`tech-${metric.key}`, traces, layout, { responsive: true, displayModeBar: false });
+    }, 0);
+  });
+
+  // Build summary table
+  const container = document.getElementById('techTableContainer');
+  let html = '<table class="tech-table"><thead><tr><th>Metric</th>';
+  TECHNICIANS.forEach(t => { html += `<th colspan="3" style="text-align:center">${t}</th>`; });
+  html += '</tr><tr><th></th>';
+  TECHNICIANS.forEach(() => { html += '<th>N</th><th>Mean</th><th>Std Dev</th>'; });
+  html += '</tr></thead><tbody>';
+
+  METRIC_DEFS.forEach(metric => {
+    const chart = CHARTS.find(c => c.key === metric.key);
+    if (!chart) return;
+
+    html += `<tr><td><strong>${metric.label}</strong></td>`;
+    TECHNICIANS.forEach(tech => {
+      const vals = [];
+      for (let i = 0; i < chart.values.length; i++) {
+        if (chart.technicians[i] === tech) vals.push(chart.values[i]);
+      }
+      const n = vals.length;
+      if (n === 0) {
+        html += '<td>—</td><td>—</td><td>—</td>';
+        return;
+      }
+      const mean = vals.reduce((a, b) => a + b, 0) / n;
+      const sd = n > 1 ? Math.sqrt(vals.reduce((s, v) => s + (v - mean) ** 2, 0) / (n - 1)) : 0;
+      const cls = n < 10 ? ' class="low-n"' : '';
+      html += `<td${cls}>${n}</td><td${cls}>${mean.toFixed(4)}</td><td${cls}>${sd.toFixed(4)}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Gauge R&R — reproducibility
+  const grrContainer = document.getElementById('grrContainer');
+  let grrHtml = '<table class="grr-table"><thead><tr><th>Metric</th><th>Total Std Dev</th><th>Between-Tech Std Dev</th><th>%GRR (Reproducibility)</th><th>Rating</th></tr></thead><tbody>';
+
+  METRIC_DEFS.forEach(metric => {
+    const chart = CHARTS.find(c => c.key === metric.key);
+    if (!chart) return;
+
+    // Overall stats
+    const allVals = chart.values;
+    const n = allVals.length;
+    const grandMean = allVals.reduce((a, b) => a + b, 0) / n;
+    const totalVar = allVals.reduce((s, v) => s + (v - grandMean) ** 2, 0) / (n - 1);
+
+    // Within-tech variance (pooled)
+    let ssWithin = 0, dfWithin = 0;
+    const techMeans = {};
+    const techCounts = {};
+    TECHNICIANS.forEach(tech => {
+      const vals = [];
+      for (let i = 0; i < chart.values.length; i++) {
+        if (chart.technicians[i] === tech) vals.push(chart.values[i]);
+      }
+      if (vals.length < 2) return;
+      const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+      techMeans[tech] = mean;
+      techCounts[tech] = vals.length;
+      vals.forEach(v => { ssWithin += (v - mean) ** 2; });
+      dfWithin += vals.length - 1;
+    });
+
+    const withinVar = dfWithin > 0 ? ssWithin / dfWithin : 0;
+    const betweenVar = Math.max(0, totalVar - withinVar);
+    const totalSD = Math.sqrt(totalVar);
+    const betweenSD = Math.sqrt(betweenVar);
+    const grrPct = totalSD > 0 ? (betweenSD / totalSD) * 100 : 0;
+
+    let rating, ratingCls;
+    if (grrPct < 10) { rating = 'Acceptable'; ratingCls = 'grr-ok'; }
+    else if (grrPct < 30) { rating = 'Marginal'; ratingCls = 'grr-marginal'; }
+    else { rating = 'Unacceptable'; ratingCls = 'grr-bad'; }
+
+    grrHtml += `<tr><td><strong>${metric.label}</strong></td><td>${totalSD.toFixed(4)}</td><td>${betweenSD.toFixed(4)}</td><td>${grrPct.toFixed(1)}%</td><td class="${ratingCls}">${rating}</td></tr>`;
+  });
+
+  grrHtml += '</tbody></table>';
+  grrContainer.innerHTML = grrHtml;
+}
+
+// Initial render
+renderCpkCards();
+renderThroughput();
+renderPareto();
+renderCharts();
+</script>
+</body>
+</html>
