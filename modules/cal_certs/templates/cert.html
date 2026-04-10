@@ -154,6 +154,49 @@ tr:nth-child(even) { background: #fafafa; }
 </div>
 {% endfor %}
 
+{% if ref_equipment %}
+<h2>Reference Calibration Equipment</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Reference Standard</th>
+      <th>Calibrates</th>
+      <th>Manufacturer</th>
+      <th>Model</th>
+      <th>S/N</th>
+      <th>Accuracy</th>
+      <th>Cal Cert #</th>
+      <th>Cal Cert Exp.</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ref in ref_equipment %}
+    <tr>
+      <td>{{ ref.name }}</td>
+      <td>{{ ref.calibrates | join(', ') }}</td>
+      <td>{{ ref.manufacturer }}</td>
+      <td>{{ ref.model }}</td>
+      <td>{{ ref.serial_number }}</td>
+      <td>{{ ref.accuracy }}</td>
+      <td>{{ ref.cal_cert_number }}</td>
+      <td>{{ ref.cal_cert_expiration }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td>Data Acquisition</td>
+      <td>All sensors</td>
+      <td>{{ daq_manufacturer }}</td>
+      <td>{{ daq_model }}</td>
+      <td>{{ daq_serial }}</td>
+      <td>—</td>
+      <td>{{ daq_cal_cert_number }}</td>
+      <td>{{ daq_cal_cert_expiration }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}
+
 <div class="footer">
   <div>
     <div class="sig-line"></div>
@@ -166,8 +209,7 @@ tr:nth-child(even) { background: #fafafa; }
 </div>
 
 <div class="reference">
-  <strong>Reference Equipment:</strong> National Instruments {{ daq_model }}, S/N {{ daq_serial }}.
-  Calibration traceable to NIST standards.
+  All reference standards are traceable to NIST.
 </div>
 
 <div class="note">

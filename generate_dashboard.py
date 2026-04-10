@@ -192,10 +192,22 @@ def generate_html(charts, records, meta=None):
         with open(events_path) as f:
             events = json.load(f)
 
+    # Load reference equipment config if file exists
+    equip_path = PROJECT_DIR / "modules" / "cal_certs" / "equipment.json"
+    ref_equipment = []
+    daq_equip = {}
+    if equip_path.exists():
+        with open(equip_path) as f:
+            equip = json.load(f)
+        ref_equipment = [r for r in equip.get("reference_sensors", []) if r.get("manufacturer")]
+        daq_equip = equip.get("daq", {})
+
     charts_json = json.dumps(charts)
     config_colors_json = json.dumps(CONFIG_COLORS)
     technicians_json = json.dumps(technicians)
     events_json = json.dumps(events)
+    ref_equipment_json = json.dumps(ref_equipment)
+    daq_equip_json = json.dumps(daq_equip)
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -397,6 +409,8 @@ const CHARTS = {charts_json};
 const CONFIG_COLORS = {config_colors_json};
 const TECHNICIANS = {technicians_json};
 const EVENTS = {events_json};
+const REF_EQUIPMENT = {ref_equipment_json};
+const DAQ_EQUIP = {daq_equip_json};
 const DEFAULT_COLOR = '#999';
 
 let currentWindow = 'all';
@@ -1052,6 +1066,20 @@ function renderCalCert(cal, filename) {{
     sensorSections += `<div style="margin-bottom:8px"><h2>${{s.name}} — Calibration Data</h2><div style="margin-bottom:6px;font-size:8.5pt"><strong>Polynomial Coefficients:</strong> ${{polyStr}}</div>${{tableHtml}}</div>`;
   }});
 
+  // Reference equipment table
+  let refTableHtml = '';
+  if (REF_EQUIPMENT.length > 0 || (DAQ_EQUIP && DAQ_EQUIP.manufacturer)) {{
+    refTableHtml = `<h2 style="font-size:10pt;color:#1a1a2e;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px">Reference Calibration Equipment</h2>
+    <table><thead><tr><th>Reference Standard</th><th>Calibrates</th><th>Manufacturer</th><th>Model</th><th>S/N</th><th>Accuracy</th><th>Cal Cert #</th><th>Cal Cert Exp.</th></tr></thead><tbody>`;
+    REF_EQUIPMENT.forEach(r => {{
+      refTableHtml += `<tr><td>${{r.name}}</td><td>${{(r.calibrates||[]).join(', ')}}</td><td>${{r.manufacturer}}</td><td>${{r.model}}</td><td>${{r.serial_number}}</td><td>${{r.accuracy}}</td><td>${{r.cal_cert_number}}</td><td>${{r.cal_cert_expiration}}</td></tr>`;
+    }});
+    if (DAQ_EQUIP && DAQ_EQUIP.manufacturer) {{
+      refTableHtml += `<tr><td>Data Acquisition</td><td>All sensors</td><td>${{DAQ_EQUIP.manufacturer}}</td><td>${{cal.daqModel}}</td><td>${{cal.daqSerial}}</td><td>—</td><td>${{DAQ_EQUIP.cal_cert_number||''}}</td><td>${{DAQ_EQUIP.cal_cert_expiration||''}}</td></tr>`;
+    }}
+    refTableHtml += '</tbody></table>';
+  }}
+
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Cal Cert — ${{cal.unitId}}</title>
 <style>
 @page{{size:letter;margin:.75in}}*{{margin:0;padding:0;box-sizing:border-box}}
@@ -1085,9 +1113,10 @@ td{{padding:3px 6px;border:1px solid #ddd}}tr:nth-child(even){{background:#fafaf
 <table><thead><tr><th>Sensor</th><th>Manufacturer</th><th>Model</th><th>S/N</th><th>Range</th><th>Units</th><th>Accuracy</th><th>Cal Points</th></tr></thead>
 <tbody>${{summaryRows}}</tbody></table>
 ${{sensorSections}}
+${{refTableHtml}}
 <div class="ft"><div><div class="sl"></div><div class="slb">Calibrated By (Print Name / Signature)</div></div>
 <div><div class="sl"></div><div class="slb">Date</div></div></div>
-<div class="ref"><strong>Reference Equipment:</strong> National Instruments ${{cal.daqModel}}, S/N ${{cal.daqSerial}}. Calibration traceable to NIST standards.</div>
+<div class="ref">All reference standards are traceable to NIST.</div>
 <div class="nt">This certificate documents the calibration state of the OMNIcheck unit at the time of calibration. Calibration valid for 12 months from calibration date. Recalibration required before ${{expStr}}.</div>
 </body></html>`;
 
@@ -1118,7 +1147,7 @@ async function processCalFiles(files) {{
       const a = document.createElement('a');
       a.href = url;
       const d = cal.calDate;
-      a.download = `CAL-${{cal.unitId}}-${{d.getFullYear()}}${{String(d.getMonth()+1).padStart(2,'0')}}${{String(d.getDate()).padStart(2,'0')}}.html`;
+      a.download = `CAL-${{cal.unitId}}-${{d.getFullYear()}}${{String(d.getMonth()+1).padStart(2,'0')}}${{String(d.getDate()).padStart(2,'0')}}_CalCert.html`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

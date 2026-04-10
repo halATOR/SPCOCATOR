@@ -10,6 +10,7 @@ Outputs HTML files (print to PDF via browser).
 """
 
 import sys
+import json
 import glob
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -22,6 +23,7 @@ sys.path.insert(0, str(PROJECT_DIR))
 from modules.cal_certs.parse_cal import parse_cal_file
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
+EQUIPMENT_PATH = Path(__file__).resolve().parent / "equipment.json"
 OUTPUT_DIR = PROJECT_DIR / "output" / "cal_certs"
 
 # Sensor display names and ordering
@@ -61,15 +63,30 @@ def build_cert_context(cal_data: dict) -> dict:
         }
         sensors.append(sensor)
 
+    # Load reference equipment config if available
+    ref_equipment = []
+    daq_info = {}
+    if EQUIPMENT_PATH.exists():
+        with open(EQUIPMENT_PATH) as f:
+            equip = json.load(f)
+        ref_equipment = equip.get("reference_sensors", [])
+        # Filter out empty entries
+        ref_equipment = [r for r in ref_equipment if r.get("manufacturer")]
+        daq_info = equip.get("daq", {})
+
     return {
         "unit_id": unit_id,
         "cert_number": f"CAL-{unit_id}-{cal_date.strftime('%Y%m%d')}",
         "cal_date_display": cal_date.strftime("%B %d, %Y"),
         "expiration_date": expiration.strftime("%B %d, %Y"),
         "mac_address": cal_data.get("mac_address", cal_data.get("daq_serial", "")),
+        "daq_manufacturer": daq_info.get("manufacturer", "National Instruments"),
         "daq_model": cal_data.get("daq_model", "USB-6001"),
         "daq_serial": cal_data.get("daq_serial", ""),
+        "daq_cal_cert_number": daq_info.get("cal_cert_number", ""),
+        "daq_cal_cert_expiration": daq_info.get("cal_cert_expiration", ""),
         "sensors": sensors,
+        "ref_equipment": ref_equipment,
     }
 
 

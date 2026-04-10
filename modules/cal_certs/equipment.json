@@ -1,0 +1,78 @@
+{
+  "_comment": "Reference equipment used to calibrate OMNIcheck sensors. Fill in actual values.",
+  "reference_sensors": [
+    {
+      "name": "Low Pressure Reference",
+      "calibrates": ["Low Pressure (Eye)", "Low Pressure (Mouth)"],
+      "manufacturer": "",
+      "model": "",
+      "serial_number": "",
+      "range": "",
+      "units": "",
+      "accuracy": "",
+      "cal_cert_number": "",
+      "cal_cert_date": "",
+      "cal_cert_expiration": ""
+    },
+    {
+      "name": "Medium Pressure Reference",
+      "calibrates": ["Medium Pressure (IP)"],
+      "manufacturer": "",
+      "model": "",
+      "serial_number": "",
+      "range": "",
+      "units": "",
+      "accuracy": "",
+      "cal_cert_number": "",
+      "cal_cert_date": "",
+      "cal_cert_expiration": ""
+    },
+    {
+      "name": "High Pressure Reference",
+      "calibrates": ["High Pressure (HP)"],
+      "manufacturer": "",
+      "model": "",
+      "serial_number": "",
+      "range": "",
+      "units": "",
+      "accuracy": "",
+      "cal_cert_number": "",
+      "cal_cert_date": "",
+      "cal_cert_expiration": ""
+    },
+    {
+      "name": "Barometric Reference",
+      "calibrates": ["Barometric Pressure"],
+      "manufacturer": "",
+      "model": "",
+      "serial_number": "",
+      "range": "",
+      "units": "",
+      "accuracy": "",
+      "cal_cert_number": "",
+      "cal_cert_date": "",
+      "cal_cert_expiration": ""
+    },
+    {
+      "name": "Temperature Reference",
+      "calibrates": ["Gas Temperature"],
+      "manufacturer": "",
+      "model": "",
+      "serial_number": "",
+      "range": "",
+      "units": "",
+      "accuracy": "",
+      "cal_cert_number": "",
+      "cal_cert_date": "",
+      "cal_cert_expiration": ""
+    }
+  ],
+  "daq": {
+    "manufacturer": "National Instruments",
+    "model": "USB-6001",
+    "serial_number": "",
+    "cal_cert_number": "",
+    "cal_cert_date": "",
+    "cal_cert_expiration": ""
+  }
+}
