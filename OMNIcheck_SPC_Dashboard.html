@@ -73,6 +73,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .grr-ok { color: #4CAF50; font-weight: 600; }
 .grr-marginal { color: #FFC107; font-weight: 600; }
 .grr-bad { color: #F44336; font-weight: 600; }
+.drop-zone { margin: 15px 30px; padding: 25px; border: 2px dashed #ccc; border-radius: 8px; text-align: center; color: #999; font-size: 13px; background: #fafafa; transition: all 0.2s; cursor: default; }
+.drop-zone.drag-over { border-color: #4FC3F7; background: #e3f2fd; color: #1a1a2e; }
+.drop-zone .drop-icon { font-size: 24px; margin-bottom: 5px; }
+.drop-zone .drop-status { margin-top: 8px; font-size: 12px; color: #4CAF50; display: none; }
 @media print {
   .controls, .tab-bar, .tech-filter, #printBtn { display: none !important; }
   .tab-content { display: block !important; }
@@ -148,6 +152,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <div class="legend-item"><div style="width:20px;border-top:2px dotted #FF9800"></div>Spec Limits (ISO 16900-5 / NFPA 1850)</div>
   <div class="legend-item"><div class="swatch" style="background:#F44336;clip-path:polygon(50% 0%,0% 100%,100% 100%)"></div>Beyond Limits</div>
   <div class="legend-item"><div class="swatch" style="background:#FFC107;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%)"></div>Run Rule</div>
+</div>
+
+<div id="calDropZone" class="drop-zone">
+  <div class="drop-icon">&#128203;</div>
+  Drop .cal files here to generate calibration certificates
+  <div class="drop-status" id="calDropStatus"></div>
 </div>
 
 <div id="cpkRow" class="cpk-row"></div>
@@ -885,24 +895,50 @@ ${sensorSections}
   return html;
 }
 
-document.getElementById('calFileInput').addEventListener('change', async (e) => {
-  const files = Array.from(e.target.files);
-  if (!files.length) return;
+// --- Cal cert drop zone ---
+const dropZone = document.getElementById('calDropZone');
+const dropStatus = document.getElementById('calDropStatus');
 
-  for (const file of files) {
+async function processCalFiles(files) {
+  const calFiles = Array.from(files).filter(f => f.name.endsWith('.cal'));
+  if (!calFiles.length) {
+    dropStatus.textContent = 'No .cal files found in drop';
+    dropStatus.style.color = '#F44336';
+    dropStatus.style.display = 'block';
+    setTimeout(() => dropStatus.style.display = 'none', 3000);
+    return;
+  }
+  let count = 0;
+  for (const file of calFiles) {
     try {
       const buf = await file.arrayBuffer();
       const cal = parseCalFile(buf, file.name);
       const html = renderCalCert(cal, file.name);
       const blob = new Blob([html], {type: 'text/html'});
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
+      window.open(URL.createObjectURL(blob), '_blank');
+      count++;
     } catch (err) {
       alert(`Error processing ${file.name}: ${err.message}`);
     }
   }
+  dropStatus.textContent = `Generated ${count} certificate${count !== 1 ? 's' : ''}`;
+  dropStatus.style.color = '#4CAF50';
+  dropStatus.style.display = 'block';
+  setTimeout(() => dropStatus.style.display = 'none', 4000);
+}
 
-  // Reset so the same file can be selected again
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  processCalFiles(e.dataTransfer.files);
+});
+// Also allow clicking the drop zone as a fallback
+dropZone.addEventListener('click', () => document.getElementById('calFileInput').click());
+
+document.getElementById('calFileInput').addEventListener('change', async (e) => {
+  await processCalFiles(e.target.files);
   e.target.value = '';
 });
 
