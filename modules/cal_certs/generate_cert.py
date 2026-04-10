@@ -41,7 +41,7 @@ def build_cert_context(cal_data: dict) -> dict:
     """Build the Jinja2 template context from parsed cal data."""
     cal_date = datetime.fromisoformat(cal_data["cal_date"])
     expiration = cal_date + timedelta(days=365)
-    unit_id = cal_data.get("unit_id", "UNKNOWN")
+    unit_id = cal_data.get("unit_id") or cal_data.get("mac_address") or "UNKNOWN"
 
     sensors = []
     for key, display_name in SENSOR_MAP:
