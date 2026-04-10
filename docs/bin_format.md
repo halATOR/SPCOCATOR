@@ -129,7 +129,29 @@ Embedded at end of file (e.g., `12092024OCS14`).
 New software version adds WOB volume correction data, operator comments, and an explicit pass/fail disposition. V2 files come from units tested with the updated OMNIcheck calibrator software. V1 files remain for historical data.
 
 ### How to distinguish V1 vs V2
-TBD — likely file size difference (V2 is larger due to WOB correction section + comments) or presence of a version marker. May also be detectable by checking for the comments string field or the "Customer" field in the header.
+**File size:** V1 files are ~111 KB. V2 files are ~206 KB (nearly double). The extra ~95 KB is raw P-V waveform data for the WOB volume correction calculations.
+
+### V2 file structure (confirmed from hex analysis)
+```
+Bytes 0x0000 - 0x003A:  Header strings (same as V1: unit ID, time, date, technician)
+Bytes 0x003B - 0x1AB8E:  V1-compatible payload (~109 KB, same as V1)
+                          - Orifice test raw data
+                          - Leak test raw data
+                          - Bell prover test raw data
+                          - Per-breath volume correction arrays
+Bytes 0x1AB8F - 0x1B1A1:  Embedded cal data trailer (same as V1)
+Bytes 0x1B1A2 - end:      V2-extra: ~95 KB of raw P-V waveform data
+                          - NFPA 40 pressure/volume loops
+                          - ISO High pressure/volume loops
+                          - NFPA 103 pressure/volume loops
+```
+
+### V2 WOB summary values
+The UI shows computed summary values (Pressure Max/Min Avg, Elastance Avg, Inhale/Exhale/Total WOB Avg) but these are **not stored as separate fields** in the .bin file. They are computed on-the-fly by LabVIEW from the raw waveform data.
+
+To extract Total WOB Avg: compute the area inside the pressure-volume hysteresis loop from the raw P-V waveform data. Requires identifying which doubles are pressure vs volume and the array boundaries for each NFPA test condition.
+
+**Status:** Array layout within the V2-extra section is not yet mapped. Need engineer confirmation of: (1) which channels are stored (pressure, volume, flow?), (2) samples per breathing cycle, (3) number of cycles per NFPA test.
 
 ### New/Changed Fields vs V1
 
