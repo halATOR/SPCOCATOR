@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Calibration Certificate — {{ unit_id }}</title>
+<style>
+@page { size: letter; margin: 0.75in; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10pt; color: #222; line-height: 1.4; }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1a1a2e; padding-bottom: 12px; margin-bottom: 15px; }
+.header .company { font-size: 18pt; font-weight: 700; color: #1a1a2e; }
+.header .company-sub { font-size: 8pt; color: #666; }
+.header .cert-info { text-align: right; font-size: 9pt; color: #555; }
+.header .cert-info .cert-num { font-size: 11pt; font-weight: 600; color: #1a1a2e; }
+
+h1 { font-size: 14pt; color: #1a1a2e; text-align: center; margin: 10px 0; }
+h2 { font-size: 10pt; color: #1a1a2e; margin: 12px 0 6px; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
+
+.unit-info { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-bottom: 12px; font-size: 9pt; }
+.unit-info .label { font-weight: 600; color: #555; }
+
+table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 8.5pt; }
+th { background: #f0f0f0; padding: 4px 6px; text-align: left; border: 1px solid #ccc; font-weight: 600; }
+td { padding: 3px 6px; border: 1px solid #ddd; }
+tr:nth-child(even) { background: #fafafa; }
+
+.sensor-section { margin-bottom: 8px; }
+.sensor-name { font-weight: 600; font-size: 9pt; color: #333; margin-bottom: 3px; }
+
+.cal-points { font-size: 8pt; }
+.cal-points th { font-size: 7.5pt; }
+
+.status-pass { color: #2e7d32; font-weight: 600; }
+.status-fail { color: #c62828; font-weight: 600; }
+
+.footer { margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 8.5pt; }
+.sig-line { border-bottom: 1px solid #999; height: 30px; margin-bottom: 3px; }
+.sig-label { color: #666; font-size: 7.5pt; }
+
+.reference { margin-top: 10px; font-size: 8pt; color: #666; }
+.note { font-size: 7.5pt; color: #888; margin-top: 8px; font-style: italic; }
+
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="company">ATOR Labs</div>
+    <div class="company-sub">Mine Survival, Inc. DBA ATOR Labs</div>
+  </div>
+  <div class="cert-info">
+    <div class="cert-num">{{ cert_number }}</div>
+    <div>Calibration Certificate</div>
+  </div>
+</div>
+
+<h1>OMNIcheck Calibration Certificate</h1>
+
+<div class="unit-info">
+  <div><span class="label">Unit ID:</span> {{ unit_id }}</div>
+  <div><span class="label">Calibration Date:</span> {{ cal_date_display }}</div>
+  <div><span class="label">MAC Address:</span> {{ mac_address }}</div>
+  <div><span class="label">Expiration Date:</span> {{ expiration_date }}</div>
+  <div><span class="label">DAQ:</span> NI {{ daq_model }} (S/N: {{ daq_serial }})</div>
+  <div><span class="label">Status:</span> <span class="status-pass">PASS</span></div>
+</div>
+
+<h2>Sensor Calibration Summary</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Sensor</th>
+      <th>Manufacturer</th>
+      <th>Model</th>
+      <th>S/N</th>
+      <th>Range</th>
+      <th>Units</th>
+      <th>Accuracy</th>
+      <th>Cal Points</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sensor in sensors %}
+    <tr>
+      <td>{{ sensor.name }}</td>
+      <td>{{ sensor.manufacturer }}</td>
+      <td>{{ sensor.model }}</td>
+      <td>{{ sensor.serial_number }}</td>
+      <td>{{ sensor.range }}</td>
+      <td>{{ sensor.units }}</td>
+      <td>{{ sensor.accuracy }}</td>
+      <td>{{ sensor.num_points }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% for sensor in sensors %}
+<div class="sensor-section">
+  <h2>{{ sensor.name }} — Calibration Data</h2>
+
+  <div style="margin-bottom:6px;font-size:8.5pt">
+    <strong>Polynomial Coefficients:</strong>
+    {% for c in sensor.polynomial %}C{{ loop.index0 }}={{ "%.6f"|format(c) }}{% if not loop.last %}, {% endif %}{% endfor %}
+  </div>
+
+  {% if sensor.cal_table %}
+  <table class="cal-points">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Raw Input (V)</th>
+        <th>Reference ({{ sensor.units }})</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for point in sensor.cal_table %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ "%.6f"|format(point[0]) }}</td>
+        <td>{{ "%.3f"|format(point[1]) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if sensor.lookup_table %}
+  <table class="cal-points">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Voltage (V)</th>
+        <th>Temperature ({{ sensor.units }})</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for point in sensor.lookup_table %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ "%.4f"|format(point[0]) }}</td>
+        <td>{{ "%.1f"|format(point[1]) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endfor %}
+
+<div class="footer">
+  <div>
+    <div class="sig-line"></div>
+    <div class="sig-label">Calibrated By (Print Name / Signature)</div>
+  </div>
+  <div>
+    <div class="sig-line"></div>
+    <div class="sig-label">Date</div>
+  </div>
+</div>
+
+<div class="reference">
+  <strong>Reference Equipment:</strong> National Instruments {{ daq_model }}, S/N {{ daq_serial }}.
+  Calibration traceable to NIST standards.
+</div>
+
+<div class="note">
+  This certificate documents the calibration state of the OMNIcheck unit at the time of calibration.
+  Calibration valid for 12 months from calibration date. Recalibration required before {{ expiration_date }}.
+</div>
+
+</body>
+</html>
