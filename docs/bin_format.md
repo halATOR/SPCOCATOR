@@ -122,6 +122,78 @@ Embedded at end of file (e.g., `12092024OCS14`).
 
 ---
 
+---
+
+## Test .bin V2 Layout ("QA Report Data Complete Cluster")
+
+New software version adds WOB volume correction data, operator comments, and an explicit pass/fail disposition. V2 files come from units tested with the updated OMNIcheck calibrator software. V1 files remain for historical data.
+
+### How to distinguish V1 vs V2
+TBD — likely file size difference (V2 is larger due to WOB correction section + comments) or presence of a version marker. May also be detectable by checking for the comments string field or the "Customer" field in the header.
+
+### New/Changed Fields vs V1
+
+**Comments** (NEW):
+- Free text field for operator notes
+- Used in failure reports to document why the test failed
+
+**Basic Information** (expanded):
+| Field | Example |
+|-------|---------|
+| Date | `1/30/2024` |
+| Time | `10:02 AM` |
+| OMNI S/N | `12345678` |
+| Technician | `Jake C.` |
+
+**Configuration** (NEW):
+| Field | Example |
+|-------|---------|
+| OMNI S/N | (serial number) |
+| Customer | `Ator Labs` |
+| Pressure Limit (inH2O) | `14.1` |
+
+**Overall Disposition** (NEW — top-level):
+- Pass/Fail status for the entire test
+
+**WOB Volume Correction Factors** (NEW — the key new data):
+
+Three test conditions: NFPA 40, ISO High, NFPA 103. Each stores:
+
+| Field | Units | Notes |
+|-------|-------|-------|
+| Adj L to V | — | Volume correction factor (e.g., 2.620, 2.580) |
+| Pressure Max Avg | kPa | Average peak positive pressure across breathing cycles |
+| Pressure Min Avg | kPa | Average peak negative pressure |
+| Elastance Avg | kPa/L | Average elastance of the breathing circuit |
+| Inhale WOB Avg | kPa·L | Average work of breathing on inhalation |
+| Exhale WOB Avg | kPa·L | Average work of breathing on exhalation |
+| Total WOB Avg | kPa·L | Inhale + Exhale WOB (3 decimal precision) |
+
+> **SPC value:** Total WOB Avg at NFPA 40 and NFPA 103 breathing rates may predict bell prover volume results. If correlation is strong (high R²), WOB alone can replace the gasometer test — saving significant test time.
+
+**WOB Avg Graph**: per-condition graphical data (waveform or trend — likely stored as array of doubles in the .bin)
+
+**Leak test + Orifice Test Data**: same as V1.
+
+### Failure .bin Files
+
+V2 software allows technicians to save .bin files for **failed** tests. These are stored in a separate folder from passing tests.
+
+Failure .bins contain:
+- All the same fields as a passing test
+- Overall Disposition = FAIL
+- Comments field with operator notes on failure cause
+- Partial or complete test data (depending on which section failed)
+
+**SPC value from failure data:**
+- Fail count per unit (number of .bin files before the passing one)
+- Which test section caused failure (leak? WOB? volume?)
+- Operator failure comments for root cause analysis
+- Real first-pass yield: (units with 0 fail bins) / (total units tested)
+- Note: elapsed time between fail and pass is NOT useful for rework time estimation — units may sit idle between attempts
+
+---
+
 ## Binary Encoding
 
 Both file types use the same encoding for structured fields:
