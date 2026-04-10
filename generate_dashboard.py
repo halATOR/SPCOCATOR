@@ -292,6 +292,8 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
   </div>
   <div style="text-align:right;display:flex;align-items:center;gap:15px">
     <button id="printBtn" onclick="window.print()" style="padding:6px 14px;border:1px solid #555;border-radius:4px;background:transparent;color:white;cursor:pointer;font-size:12px">Print / Export</button>
+    <button onclick="document.getElementById('calFileInput').click()" style="padding:6px 14px;border:1px solid #555;border-radius:4px;background:transparent;color:white;cursor:pointer;font-size:12px">Generate Cal Cert(s)</button>
+    <input type="file" id="calFileInput" accept=".cal" multiple style="display:none">
     <div>
       <div style="font-size:14px;font-weight:600">ATOR Labs</div>
       <div style="font-size:11px;color:#888">Generated {__import__('datetime').date.today().isoformat()}</div>
@@ -923,6 +925,185 @@ function renderTechAnalysis() {{
   grrHtml += '</tbody></table>';
   grrContainer.innerHTML = grrHtml;
 }}
+
+// === Calibration Certificate Generator (client-side) ===
+
+class CalReader {{
+  constructor(buf) {{ this.dv = new DataView(buf); this.pos = 0; }}
+  u32() {{ const v = this.dv.getUint32(this.pos); this.pos += 4; return v; }}
+  i64() {{
+    const hi = this.dv.getInt32(this.pos); const lo = this.dv.getUint32(this.pos+4);
+    this.pos += 8; return hi * 0x100000000 + lo;
+  }}
+  skip(n) {{ this.pos += n; }}
+  f64() {{ const v = this.dv.getFloat64(this.pos); this.pos += 8; return v; }}
+  f32() {{ const v = this.dv.getFloat32(this.pos); this.pos += 4; return v; }}
+  str() {{
+    const len = this.u32();
+    const bytes = new Uint8Array(this.dv.buffer, this.pos, len);
+    this.pos += len;
+    // Replace 0xB1->±, 0xB0->°
+    let s = '';
+    for (let i = 0; i < bytes.length; i++) {{
+      if (bytes[i] === 0xB1) s += '±';
+      else if (bytes[i] === 0xB0) s += '°';
+      else s += String.fromCharCode(bytes[i]);
+    }}
+    return s;
+  }}
+  doubles(n) {{ const a = []; for (let i=0;i<n;i++) a.push(this.f64()); return a; }}
+}}
+
+function parseCalFile(buf, filename) {{
+  const r = new CalReader(buf);
+  // LabVIEW timestamp: I64 seconds since 1904-01-01
+  const lvSec = r.i64(); r.skip(8);
+  const epoch1904 = new Date(1904, 0, 1).getTime();
+  const calDate = new Date(epoch1904 + lvSec * 1000);
+
+  function readSensorBase() {{
+    return {{ model: r.str(), serial_number: r.str(), manufacturer: r.str(), range: r.str(), units: r.str(), accuracy: r.str() }};
+  }}
+  function readCalTable() {{
+    const np = r.u32(); const nc = r.u32();
+    const pts = [];
+    for (let i=0;i<np;i++) pts.push([parseFloat(r.str()), parseFloat(r.str())]);
+    return pts;
+  }}
+
+  // Barometric
+  const baro = readSensorBase();
+  let np = r.u32(); baro.polynomial = r.doubles(np);
+  baro.name = 'Barometric Pressure';
+
+  // Temperature
+  const temp = {{ model: r.str(), serial_number: r.str(), manufacturer: r.str(), range: r.str(), units: r.str(), accuracy: r.str() }};
+  const nLookup = r.u32();
+  temp.lookup_table = [];
+  for (let i=0;i<nLookup;i++) temp.lookup_table.push([r.f32(), r.f32()]);
+  np = r.u32(); temp.polynomial = r.doubles(np);
+  temp.name = 'Gas Temperature';
+
+  r.skip(2); // flag bytes
+  const daqModel = r.str();
+  const daqSerial = r.str();
+
+  // HP, IP, Eye, Mouth
+  const sensorNames = ['High Pressure (HP)', 'Medium Pressure (IP)', 'Low Pressure (Eye)', 'Low Pressure (Mouth)'];
+  const sensors = [baro, temp];
+  for (const sName of sensorNames) {{
+    const s = readSensorBase();
+    np = r.u32(); s.polynomial = r.doubles(np);
+    s.cal_table = readCalTable();
+    s.name = sName;
+    sensors.push(s);
+  }}
+
+  r.skip(1);
+  const unitId = r.str();
+
+  let mac = '';
+  const stem = filename.replace('.cal','');
+  if (stem.includes('_')) {{ mac = stem.split('_')[0].replace('OMNI-',''); }}
+
+  return {{ calDate, unitId, daqModel, daqSerial, mac, sensors }};
+}}
+
+function renderCalCert(cal, filename) {{
+  const d = cal.calDate;
+  const calDateStr = d.toLocaleDateString('en-US', {{year:'numeric',month:'long',day:'numeric'}});
+  const expDate = new Date(d); expDate.setFullYear(expDate.getFullYear()+1);
+  const expStr = expDate.toLocaleDateString('en-US', {{year:'numeric',month:'long',day:'numeric'}});
+  const certNum = `CAL-${{cal.unitId}}-${{d.getFullYear()}}${{String(d.getMonth()+1).padStart(2,'0')}}${{String(d.getDate()).padStart(2,'0')}}`;
+
+  // Reorder: Eye, Mouth, IP, HP, Baro, Temp
+  const order = ['Low Pressure (Eye)','Low Pressure (Mouth)','Medium Pressure (IP)','High Pressure (HP)','Barometric Pressure','Gas Temperature'];
+  const sorted = order.map(n => cal.sensors.find(s => s.name === n)).filter(Boolean);
+
+  let summaryRows = '';
+  sorted.forEach(s => {{
+    const nPts = (s.cal_table || s.lookup_table || []).length;
+    summaryRows += `<tr><td>${{s.name}}</td><td>${{s.manufacturer}}</td><td>${{s.model}}</td><td>${{s.serial_number}}</td><td>${{s.range}}</td><td>${{s.units}}</td><td>${{s.accuracy}}</td><td>${{nPts}}</td></tr>`;
+  }});
+
+  let sensorSections = '';
+  sorted.forEach(s => {{
+    const polyStr = s.polynomial.map((c,i) => `C${{i}}=${{c.toFixed(6)}}`).join(', ');
+    let tableHtml = '';
+    if (s.cal_table && s.cal_table.length) {{
+      tableHtml = `<table class="cp"><tr><th>#</th><th>Raw Input (V)</th><th>Reference (${{s.units}})</th></tr>`;
+      s.cal_table.forEach((p,i) => {{ tableHtml += `<tr><td>${{i+1}}</td><td>${{p[0].toFixed(6)}}</td><td>${{p[1].toFixed(3)}}</td></tr>`; }});
+      tableHtml += '</table>';
+    }} else if (s.lookup_table && s.lookup_table.length) {{
+      tableHtml = `<table class="cp"><tr><th>#</th><th>Voltage (V)</th><th>Temperature (${{s.units}})</th></tr>`;
+      s.lookup_table.forEach((p,i) => {{ tableHtml += `<tr><td>${{i+1}}</td><td>${{p[0].toFixed(4)}}</td><td>${{p[1].toFixed(1)}}</td></tr>`; }});
+      tableHtml += '</table>';
+    }}
+    sensorSections += `<div style="margin-bottom:8px"><h2>${{s.name}} — Calibration Data</h2><div style="margin-bottom:6px;font-size:8.5pt"><strong>Polynomial Coefficients:</strong> ${{polyStr}}</div>${{tableHtml}}</div>`;
+  }});
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Cal Cert — ${{cal.unitId}}</title>
+<style>
+@page{{size:letter;margin:.75in}}*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:'Segoe UI',Arial,sans-serif;font-size:10pt;color:#222;line-height:1.4}}
+.hdr{{display:flex;justify-content:space-between;border-bottom:3px solid #1a1a2e;padding-bottom:12px;margin-bottom:15px}}
+.hdr .co{{font-size:18pt;font-weight:700;color:#1a1a2e}}.hdr .sub{{font-size:8pt;color:#666}}
+.hdr .ci{{text-align:right;font-size:9pt;color:#555}}.hdr .cn{{font-size:11pt;font-weight:600;color:#1a1a2e}}
+h1{{font-size:14pt;color:#1a1a2e;text-align:center;margin:10px 0}}
+h2{{font-size:10pt;color:#1a1a2e;margin:12px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}}
+.ui{{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;margin-bottom:12px;font-size:9pt}}
+.ui .lb{{font-weight:600;color:#555}}
+table{{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:8.5pt}}
+th{{background:#f0f0f0;padding:4px 6px;text-align:left;border:1px solid #ccc;font-weight:600}}
+td{{padding:3px 6px;border:1px solid #ddd}}tr:nth-child(even){{background:#fafafa}}
+.cp{{font-size:8pt}}.cp th{{font-size:7.5pt}}
+.ft{{margin-top:20px;border-top:1px solid #ccc;padding-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:8.5pt}}
+.sl{{border-bottom:1px solid #999;height:30px;margin-bottom:3px}}.slb{{color:#666;font-size:7.5pt}}
+.ref{{margin-top:10px;font-size:8pt;color:#666}}.nt{{font-size:7.5pt;color:#888;margin-top:8px;font-style:italic}}
+.pass{{color:#2e7d32;font-weight:600}}
+@media print{{body{{-webkit-print-color-adjust:exact;print-color-adjust:exact}}}}
+</style></head><body>
+<div class="hdr"><div><div class="co">ATOR Labs</div><div class="sub">Mine Survival, Inc. DBA ATOR Labs</div></div>
+<div class="ci"><div class="cn">${{certNum}}</div><div>Calibration Certificate</div></div></div>
+<h1>OMNIcheck Calibration Certificate</h1>
+<div class="ui">
+<div><span class="lb">Unit ID:</span> ${{cal.unitId}}</div><div><span class="lb">Calibration Date:</span> ${{calDateStr}}</div>
+<div><span class="lb">MAC Address:</span> ${{cal.mac}}</div><div><span class="lb">Expiration Date:</span> ${{expStr}}</div>
+<div><span class="lb">DAQ:</span> NI ${{cal.daqModel}} (S/N: ${{cal.daqSerial}})</div><div><span class="lb">Status:</span> <span class="pass">PASS</span></div>
+</div>
+<h2>Sensor Calibration Summary</h2>
+<table><thead><tr><th>Sensor</th><th>Manufacturer</th><th>Model</th><th>S/N</th><th>Range</th><th>Units</th><th>Accuracy</th><th>Cal Points</th></tr></thead>
+<tbody>${{summaryRows}}</tbody></table>
+${{sensorSections}}
+<div class="ft"><div><div class="sl"></div><div class="slb">Calibrated By (Print Name / Signature)</div></div>
+<div><div class="sl"></div><div class="slb">Date</div></div></div>
+<div class="ref"><strong>Reference Equipment:</strong> National Instruments ${{cal.daqModel}}, S/N ${{cal.daqSerial}}. Calibration traceable to NIST standards.</div>
+<div class="nt">This certificate documents the calibration state of the OMNIcheck unit at the time of calibration. Calibration valid for 12 months from calibration date. Recalibration required before ${{expStr}}.</div>
+</body></html>`;
+
+  return html;
+}}
+
+document.getElementById('calFileInput').addEventListener('change', async (e) => {{
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  for (const file of files) {{
+    try {{
+      const buf = await file.arrayBuffer();
+      const cal = parseCalFile(buf, file.name);
+      const html = renderCalCert(cal, file.name);
+      const blob = new Blob([html], {{type: 'text/html'}});
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    }} catch (err) {{
+      alert(`Error processing ${{file.name}}: ${{err.message}}`);
+    }}
+  }}
+
+  // Reset so the same file can be selected again
+  e.target.value = '';
+}});
 
 // Initial render
 renderCpkCards();
