@@ -1023,12 +1023,23 @@ function parseCalFile(buf, filename) {{
     sensors.push(s);
   }}
 
-  r.skip(1);
-  const unitId = r.str();
+  let unitId = '';
+  try {{
+    r.skip(1);
+    unitId = r.str();
+  }} catch(e) {{
+    console.warn('Cal parser: could not read unit ID at offset', r.pos, 'of', r.dv.byteLength, e.message);
+  }}
 
   let mac = '';
   const stem = filename.replace('.cal','');
   if (stem.includes('_')) {{ mac = stem.split('_')[0].replace('OMNI-',''); }}
+
+  // Fallback: if unitId is empty, try to derive from filename
+  if (!unitId && stem.includes('_')) {{
+    // Filename: OMNI-MAC_DATE_Cal → no unit ID available from filename
+    // Leave empty rather than guess
+  }}
 
   return {{ calDate, unitId, daqModel, daqSerial, mac, sensors }};
 }}
