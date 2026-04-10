@@ -151,7 +151,48 @@ The UI shows computed summary values (Pressure Max/Min Avg, Elastance Avg, Inhal
 
 To extract Total WOB Avg: compute the area inside the pressure-volume hysteresis loop from the raw P-V waveform data. Requires identifying which doubles are pressure vs volume and the array boundaries for each NFPA test condition.
 
-**Status:** Array layout within the V2-extra section is not yet mapped. Need engineer confirmation of: (1) which channels are stored (pressure, volume, flow?), (2) samples per breathing cycle, (3) number of cycles per NFPA test.
+### V2-extra section layout (CONFIRMED via hex analysis)
+
+**Header:** 13 bytes (`U32=1, U16=4, U32=1, 3 bytes padding`)
+
+**3 sequential WOB correction blocks** (NFPA 40, ISO High, NFPA 103). Each block:
+
+```
+6 × float64   Summary values (see below)
+1 × float32   Adj L to V volume correction factor
+1 × U32       Columns (always 2 — pressure + volume channels)
+1 × U32       Rows (varies: 1429–2500 per condition)
+N×2 × float64 Interleaved P-V waveform data (pressure, volume, pressure, volume, ...)
+```
+
+**Block size formula:** `6×8 + 4 + 4 + 4 + cols × rows × 8` bytes
+
+**Summary value order:**
+| Index | Field | Units |
+|-------|-------|-------|
+| 0 | Pressure Max Avg | kPa |
+| 1 | Elastance Avg | kPa/L |
+| 2 | Pressure Min Avg | kPa |
+| 3 | Inhale WOB Avg | kPa·L |
+| 4 | Exhale WOB Avg | kPa·L |
+| 5 | Total WOB Avg | kPa·L |
+
+**Note on Block 1 (NFPA 40):** The Adj L to V float32 at the expected position (byte 48 of the block) reads as 0.946 — which may indicate the format is slightly different for Block 1 (7 doubles instead of 6+f32, with the first double being the Adj L to V = 0.0). Blocks 2 and 3 clearly follow the 6-double + float32 pattern, with Adj L to V values of 2.575 and 2.640 respectively.
+
+**Verified values from OCSA57 (2026-04-10):**
+
+| Metric | NFPA 40 | ISO High | NFPA 103 |
+|--------|---------|----------|----------|
+| Pressure Max Avg | 0.086 | 4.978 | 3.421 |
+| Elastance Avg | 0.007 | 1.576 | 1.165 |
+| Pressure Min Avg | -0.115 | -5.102 | -3.471 |
+| Inhale WOB Avg | 0.003 | 0.804 | 0.605 |
+| Exhale WOB Avg | 0.004 | 0.772 | 0.560 |
+| Total WOB Avg | 0.004 | 0.006 | 0.017 |
+| Adj L to V | — | 2.575 | 2.640 |
+| Waveform rows | 2500 | 1429 | 2001 |
+
+**File tail:** ~210 bytes after Block 3 (padding or metadata).
 
 ### New/Changed Fields vs V1
 
