@@ -1129,8 +1129,8 @@ td{{padding:3px 6px;border:1px solid #ddd}}tr:nth-child(even){{background:#fafaf
 <tbody>${{summaryRows}}</tbody></table>
 ${{sensorSections}}
 ${{refTableHtml}}
-<div class="ft"><div><div class="sl"></div><div class="slb">Calibrated By (Print Name / Signature)</div></div>
-<div><div class="sl"></div><div class="slb">Date</div></div></div>
+<div class="ft"><div><div class="sl">Karl Bennicoff Yundt, QA Director</div><div class="slb">Calibrated By</div></div>
+<div><div class="sl">${{calDateStr}}</div><div class="slb">Date</div></div></div>
 <div class="ref">All reference standards are traceable to NIST.</div>
 <div class="nt">This certificate documents the calibration state of the OMNIcheck unit at the time of calibration. Calibration valid for 12 months from calibration date. Recalibration required before ${{expStr}}.</div>
 </body></html>`;
