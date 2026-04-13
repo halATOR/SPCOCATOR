@@ -24,6 +24,7 @@ from modules.cal_certs.parse_cal import parse_cal_file
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 EQUIPMENT_PATH = Path(__file__).resolve().parent / "equipment.json"
+MAC_MAP_PATH = PROJECT_DIR / "data" / "mac_serial_map.json"
 OUTPUT_DIR = PROJECT_DIR / "output" / "cal_certs"
 
 # Sensor display names and ordering
@@ -41,7 +42,16 @@ def build_cert_context(cal_data: dict) -> dict:
     """Build the Jinja2 template context from parsed cal data."""
     cal_date = datetime.fromisoformat(cal_data["cal_date"])
     expiration = cal_date + timedelta(days=365)
-    unit_id = cal_data.get("unit_id") or cal_data.get("mac_address") or "UNKNOWN"
+    unit_id = cal_data.get("unit_id")
+    if not unit_id:
+        # Try MAC→serial lookup
+        mac = cal_data.get("mac_address") or cal_data.get("daq_serial", "")
+        if MAC_MAP_PATH.exists() and mac:
+            with open(MAC_MAP_PATH) as f:
+                mac_map = json.load(f)
+            unit_id = mac_map.get(mac)
+        if not unit_id:
+            unit_id = mac or "UNKNOWN"
 
     sensors = []
     for key, display_name in SENSOR_MAP:

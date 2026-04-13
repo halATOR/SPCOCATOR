@@ -209,6 +209,14 @@ def generate_html(charts, records, meta=None):
     ref_equipment_json = json.dumps(ref_equipment)
     daq_equip_json = json.dumps(daq_equip)
 
+    # Load MAC→serial map if available
+    mac_map_path = PROJECT_DIR / "data" / "mac_serial_map.json"
+    mac_map = {}
+    if mac_map_path.exists():
+        with open(mac_map_path) as f:
+            mac_map = json.load(f)
+    mac_map_json = json.dumps(mac_map)
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -411,6 +419,7 @@ const TECHNICIANS = {technicians_json};
 const EVENTS = {events_json};
 const REF_EQUIPMENT = {ref_equipment_json};
 const DAQ_EQUIP = {daq_equip_json};
+const MAC_MAP = {mac_map_json};
 const DEFAULT_COLOR = '#999';
 
 let currentWindow = 'all';
@@ -1033,8 +1042,8 @@ function parseCalFile(buf, filename) {{
   const stem = filename.replace('.cal','');
   if (stem.includes('_')) {{ mac = stem.split('_')[0].replace('OMNI-',''); }}
 
-  // Fallback: use MAC address if unit ID is empty
-  if (!unitId && mac) {{ unitId = mac; }}
+  // Resolve unit ID: try MAC→serial lookup, then fall back to MAC
+  if (!unitId && mac) {{ unitId = MAC_MAP[mac] || mac; }}
 
   return {{ calDate, unitId, daqModel, daqSerial, mac, sensors }};
 }}

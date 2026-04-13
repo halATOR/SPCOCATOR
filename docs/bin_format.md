@@ -171,11 +171,11 @@ N×2 × float64 Interleaved P-V waveform data (pressure, volume, pressure, volum
 | Index | Field | Units | Validation |
 |-------|-------|-------|------------|
 | 0 | Pressure Max Avg | kPa | Positive |
-| 1 | Pressure Min Avg | kPa | Negative |
-| 2 | Elastance Avg | kPa/L | Small positive |
+| 1 | Total WOB Avg | kPa·L | = Inhale + Exhale |
+| 2 | Pressure Min Avg | kPa | Negative |
 | 3 | Inhale WOB Avg | kPa·L | Positive |
 | 4 | Exhale WOB Avg | kPa·L | Positive |
-| 5 | Total WOB Avg | kPa·L | = Inhale + Exhale |
+| 5 | Elastance Avg | kPa/L | Small positive |
 
 **Note on Block 1 (NFPA 40):** The Adj L to V float32 at the expected position (byte 48 of the block) reads as 0.946 — which may indicate the format is slightly different for Block 1 (7 doubles instead of 6+f32, with the first double being the Adj L to V = 0.0). Blocks 2 and 3 clearly follow the 6-double + float32 pattern, with Adj L to V values of 2.575 and 2.640 respectively.
 
@@ -184,15 +184,17 @@ N×2 × float64 Interleaved P-V waveform data (pressure, volume, pressure, volum
 | Metric | NFPA 40* | ISO High | NFPA 103 |
 |--------|---------|----------|----------|
 | Pressure Max Avg | 0.086 | 4.978 | 3.421 |
+| Total WOB Avg | 0.007 | **1.576** | **1.165** |
 | Pressure Min Avg | -0.115 | -5.102 | -3.471 |
-| Elastance Avg | 0.007 | 0.006 | 0.017 |
 | Inhale WOB Avg | 0.003 | 0.804 | 0.605 |
 | Exhale WOB Avg | 0.004 | 0.772 | 0.560 |
-| Total WOB Avg | 0.004 | 1.576 | 1.165 |
+| Elastance Avg | 0.004 | 0.006 | 0.017 |
 | Adj L to V | — | 2.575 | 2.640 |
 | Waveform rows | 2500 | 1429 | 2001 |
 
 *NFPA 40 values appear suspect for this unit — engineer investigating raw data.
+Validation: ISO High Total WOB (1.576) = Inhale (0.804) + Exhale (0.772) ✓
+Validation: NFPA 103 Total WOB (1.165) = Inhale (0.605) + Exhale (0.560) ✓
 
 **File tail:** ~210 bytes after Block 3 (padding or metadata).
 
