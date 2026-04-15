@@ -23,6 +23,7 @@ from collections import defaultdict
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 PDF_DIR = Path.home() / "Desktop" / "Final QA REPORTS"
+BIN_DIR = PDF_DIR / "Raw Data"
 DATA_DIR = PROJECT_DIR / "data"
 
 # Unit prefix → configuration type mapping
@@ -424,6 +425,44 @@ def main():
             r["leak_start"] = start
             r["leak_end"] = end
             r["leak_delta"] = abs(start) - abs(end)
+
+    # Overlay .bin WOB Protocol A values (unrounded, 3+ decimal places)
+    import sys
+    sys.path.insert(0, str(PROJECT_DIR))
+    from shared.parse_test_bin import parse_test_bin
+
+    bin_wob_by_unit = {}
+    if BIN_DIR.exists():
+        for bin_file in sorted(BIN_DIR.glob("*.bin")):
+            try:
+                parsed = parse_test_bin(str(bin_file))
+                uid = parsed.get("unit_id", "")
+                if uid and "wob_a_10" in parsed:
+                    bin_wob_by_unit[uid] = parsed
+            except Exception:
+                pass
+
+    bin_overlay_count = 0
+    wob_map = [
+        ("wob_a_10", "wob_A_10"),
+        ("wob_a_20", "wob_A_20"),
+        ("wob_a_35", "wob_A_35"),
+        ("wob_a_50", "wob_A_50"),
+        ("wob_a_65", "wob_A_65"),
+        ("wob_b_65", "wob_B_65"),
+        ("wob_b_85", "wob_B_85"),
+        ("wob_b_105", "wob_B_105"),
+    ]
+    for r in deduped:
+        uid = r.get("unit_id_canonical", "")
+        if uid in bin_wob_by_unit:
+            b = bin_wob_by_unit[uid]
+            for bin_key, pdf_key in wob_map:
+                if bin_key in b:
+                    r[pdf_key] = round(b[bin_key], 4)
+            bin_overlay_count += 1
+    if bin_overlay_count:
+        print(f"Overlaid .bin WOB values for {bin_overlay_count}/{len(deduped)} units")
 
     # Sort by date
     deduped.sort(key=lambda r: r.get("date_iso") or "9999")

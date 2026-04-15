@@ -1,0 +1,35 @@
+{
+  "watch": [
+    {
+      "name": "Final QA PDFs (cloud)",
+      "path": "/Volumes/OC/QMS/Final Inspection QA/Final QA REPORTS",
+      "extensions": [".pdf"],
+      "action": "sync_and_dashboard",
+      "sync_to": "~/Desktop/Final QA REPORTS",
+      "recursive": false
+    },
+    {
+      "name": "Test .bin files (cloud)",
+      "path": "/Volumes/OC/QMS/Final Inspection QA/Final QA REPORTS/Raw Data",
+      "extensions": [".bin"],
+      "action": "sync_and_dashboard",
+      "sync_to": "~/Desktop/Final QA REPORTS/Raw Data",
+      "recursive": false
+    },
+    {
+      "name": "Calibration files",
+      "path": "/Volumes/OC/QMS/Final Inspection QA/BACKUP CALIBRATION FILES",
+      "extensions": [".cal"],
+      "action": "cal_cert",
+      "recursive": false
+    }
+  ],
+  "output": {
+    "dashboard_copy_to": "/Volumes/OC/QMS/SPC Dashboards",
+    "cal_certs_dir": "/Volumes/OC/QMS/Calibration Documentation"
+  },
+  "debounce_seconds": 5,
+  "log_file": "logs/watcher.log",
+  "log_max_bytes": 5242880,
+  "log_backup_count": 3
+}

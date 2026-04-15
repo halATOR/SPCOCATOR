@@ -1,0 +1,3330 @@
+{
+  "_meta": {
+    "total_forms": 21,
+    "total_measurements": 905,
+    "parts_with_data": [
+      "Piston Body",
+      "Piston Cap",
+      "Piston Housing",
+      "Top Hat",
+      "Trachea Base"
+    ],
+    "date_range": [
+      "2025-10-08",
+      "2026-03-27"
+    ],
+    "extraction_date": "2026-04-15",
+    "warnings": [
+      "2025-10-08Piston Body.pdf: D3 = 1.175 is far from nominal 1.125 (spec range 0.0100)",
+      "2025-12-04Piston Cap.pdf: D1 = 0.0752 is far from nominal 0.47 (spec range 0.0300)",
+      "2025-12-04Piston Cap.pdf: D1 = 0.0745 is far from nominal 0.47 (spec range 0.0300)",
+      "2025-12-04Piston Cap.pdf: D1 = 0.0783 is far from nominal 0.47 (spec range 0.0300)",
+      "2025-12-04Piston Cap.pdf: D1 = 0.0777 is far from nominal 0.47 (spec range 0.0300)",
+      "2025-12-04Piston Cap.pdf: D1 = 0.0748 is far from nominal 0.47 (spec range 0.0300)",
+      "2025-12-04Piston Cap.pdf: D1 = 0.0733 is far from nominal 0.47 (spec range 0.0300)",
+      "2025-12-08Piston Housing.pdf: H = 9.945 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0248 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0251 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0251 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.025 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0251 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0251 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0249 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.0251 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.025 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.025 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-01-20Piston Cap.pdf: D2 = 0.025 is far from nominal 0.25 (spec range 0.0300)",
+      "2026-02-23Piston Cap.pdf: ID = 0.14 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.13 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.129 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.126 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.126 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.128 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.125 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.128 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.126 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.125 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.125 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.124 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.127 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.125 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.122 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.124 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.125 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.125 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.124 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.123 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-02-23Piston Cap.pdf: ID = 0.127 is far from nominal 9.375 (spec range 0.1000)",
+      "2026-03-27Piston Housing.pdf: H = 9.438 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.462 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.475 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.473 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.48 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.472 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.485 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Piston Housing.pdf: H = 9.445 is far from nominal 9.535 (spec range 0.0100)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.62 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.528 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.099 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.619 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.526 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.098 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.618 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.524 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.095 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.62 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.525 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.099 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.618 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.525 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.096 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.619 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.526 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.093 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.62 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.525 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.097 is far from nominal 1.525 (spec range 0.0020)",
+      "2026-03-27Top Hat.pdf: OD1 = 1.619 is far from nominal 12.0 (spec range 0.0200)",
+      "2026-03-27Top Hat.pdf: OD2 = 1.525 is far from nominal 10.375 (spec range 0.0300)",
+      "2026-03-27Top Hat.pdf: OD4 = 0.095 is far from nominal 1.525 (spec range 0.0020)"
+    ]
+  },
+  "part_registry": {
+    "Trachea Base": {
+      "drawing": "0000214",
+      "material": "ABS",
+      "units": "inches",
+      "dimensions": {
+        "OD": {
+          "nominal": 7.13,
+          "usl": 7.15,
+          "lsl": 7.11
+        },
+        "A": {
+          "nominal": 7.0,
+          "usl": 7.05,
+          "lsl": 6.95
+        },
+        "D1": {
+          "nominal": 1.75,
+          "usl": 1.755,
+          "lsl": 1.745
+        },
+        "ID1": {
+          "nominal": 1.625,
+          "usl": 1.627,
+          "lsl": 1.623
+        },
+        "ID2": {
+          "nominal": 1.5,
+          "usl": 1.505,
+          "lsl": 1.495
+        },
+        "ID3": {
+          "nominal": 1.375,
+          "usl": 1.378,
+          "lsl": 1.375
+        },
+        "H": {
+          "nominal": 0.375,
+          "usl": 0.425,
+          "lsl": 0.325
+        }
+      }
+    },
+    "Top Hat": {
+      "drawing": "000020J-I",
+      "material": "Injection Molded",
+      "units": "inches",
+      "dimensions": {
+        "OD1": {
+          "nominal": 12.0,
+          "usl": 12.01,
+          "lsl": 11.99
+        },
+        "OD2": {
+          "nominal": 10.375,
+          "usl": 10.39,
+          "lsl": 10.36
+        },
+        "OD3": {
+          "nominal": 1.62,
+          "usl": 1.621,
+          "lsl": 1.619
+        },
+        "OD4": {
+          "nominal": 1.525,
+          "usl": 1.526,
+          "lsl": 1.524
+        },
+        "ID1": {
+          "nominal": 10.0,
+          "usl": 10.015,
+          "lsl": 9.985
+        },
+        "ID2": {
+          "nominal": 1.399,
+          "usl": 1.404,
+          "lsl": 1.394
+        },
+        "A": {
+          "nominal": 1.0,
+          "usl": 1.05,
+          "lsl": 0.95
+        }
+      }
+    },
+    "Piston Cap": {
+      "drawing": "00001HG",
+      "material": "PLA",
+      "units": "inches",
+      "dimensions": {
+        "OD": {
+          "nominal": 9.625,
+          "usl": 9.675,
+          "lsl": 9.575
+        },
+        "ID": {
+          "nominal": 9.375,
+          "usl": 9.425,
+          "lsl": 9.325
+        },
+        "D1": {
+          "nominal": 0.47,
+          "usl": 0.485,
+          "lsl": 0.455
+        },
+        "D2": {
+          "nominal": 0.25,
+          "usl": 0.265,
+          "lsl": 0.235
+        },
+        "H": {
+          "nominal": 0.438,
+          "usl": 0.453,
+          "lsl": 0.423
+        }
+      }
+    },
+    "Piston Body": {
+      "drawing": "00001JC",
+      "material": "PLA",
+      "units": "inches",
+      "dimensions": {
+        "OD": {
+          "nominal": 9.25,
+          "usl": 9.255,
+          "lsl": 9.245
+        },
+        "ID": {
+          "nominal": 8.8,
+          "usl": 8.85,
+          "lsl": 8.75
+        },
+        "D1": {
+          "nominal": 0.266,
+          "usl": 0.271,
+          "lsl": 0.261
+        },
+        "D2": {
+          "nominal": 0.772,
+          "usl": 0.777,
+          "lsl": 0.767
+        },
+        "D3": {
+          "nominal": 1.125,
+          "usl": 1.13,
+          "lsl": 1.12
+        },
+        "D4": {
+          "nominal": 0.34,
+          "usl": 0.355,
+          "lsl": 0.325
+        },
+        "D5": {
+          "nominal": 0.265,
+          "usl": 0.27,
+          "lsl": 0.26
+        },
+        "D6": {
+          "nominal": 0.154,
+          "usl": 0.159,
+          "lsl": 0.149
+        },
+        "H": {
+          "nominal": 5.25,
+          "usl": 5.3,
+          "lsl": 5.2
+        }
+      }
+    },
+    "Piston Housing": {
+      "drawing": "0000209-I",
+      "material": "Injection Molded",
+      "units": "inches",
+      "dimensions": {
+        "OD1": {
+          "nominal": 12.0,
+          "usl": 12.02,
+          "lsl": 11.98
+        },
+        "OD2": {
+          "nominal": 10.8,
+          "usl": 10.85,
+          "lsl": 10.75
+        },
+        "OD3": {
+          "nominal": 13.75,
+          "usl": 13.755,
+          "lsl": 13.745
+        },
+        "ID": {
+          "nominal": 10.0,
+          "usl": 10.005,
+          "lsl": 9.995
+        },
+        "A": {
+          "nominal": 0.221,
+          "usl": 0.271,
+          "lsl": 0.171
+        },
+        "H": {
+          "nominal": 9.535,
+          "usl": 9.54,
+          "lsl": 9.53
+        }
+      }
+    },
+    "10mm Linear Rod": {
+      "drawing": "000020V",
+      "material": "Aluminum",
+      "units": "mm",
+      "dimensions": {
+        "OD": {
+          "nominal": 10.0,
+          "usl": 10.127,
+          "lsl": 9.873
+        },
+        "H": {
+          "nominal": 279.0,
+          "usl": 279.381,
+          "lsl": 278.619
+        }
+      }
+    },
+    "Lead Screw": {
+      "drawing": "DSK-00060281",
+      "material": "Engineered Polymer (Drylin)",
+      "units": "inches",
+      "dimensions": {
+        "OD": {
+          "nominal": 0.375,
+          "usl": 0.375,
+          "lsl": 0.373
+        },
+        "H1": {
+          "nominal": 5.275,
+          "usl": 5.28,
+          "lsl": 5.27
+        },
+        "H2": {
+          "nominal": 6.0,
+          "usl": 6.005,
+          "lsl": 5.995
+        }
+      }
+    }
+  },
+  "forms": [
+    {
+      "filename": "2025-10-08Piston Body.pdf",
+      "date": "2025-10-08",
+      "inspector": "Rob Moran",
+      "part": "Piston Body",
+      "product": "",
+      "lot": "L00214",
+      "po": "51369-15012",
+      "drawing": "00001JC",
+      "delivery_qty": 21,
+      "insp_qty": 10,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "H"
+      ],
+      "notes": "tolerances need some guidance. Measured width and height and fitment of the center nut and slide bearings.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.25,
+            "D1": 0.261,
+            "D2": 0.762,
+            "D3": 1.175,
+            "D4": 0.332,
+            "D5": 0.2575,
+            "D6": 0.141,
+            "H": 5.25
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.235,
+            "H": 5.231
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.26,
+            "H": 5.241
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.222,
+            "H": 5.234
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.25,
+            "H": 5.238
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 9.208,
+            "H": 5.28
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 9.255,
+            "H": 5.232
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 9.258,
+            "H": 5.237
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 9.218,
+            "H": 5.227
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 9.229,
+            "H": 5.239
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD": 9.235,
+            "H": 5.235
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD": 9.234,
+            "H": 5.255
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "OD": 9.212,
+            "H": 5.216
+          }
+        },
+        {
+          "part_seq": 15,
+          "values": {
+            "OD": 9.23,
+            "H": 5.248
+          }
+        },
+        {
+          "part_seq": 16,
+          "values": {
+            "OD": 9.227,
+            "H": 5.241
+          }
+        },
+        {
+          "part_seq": 17,
+          "values": {
+            "OD": 9.212,
+            "H": 5.232
+          }
+        },
+        {
+          "part_seq": 18,
+          "values": {
+            "OD": 9.231,
+            "H": 5.23
+          }
+        },
+        {
+          "part_seq": 19,
+          "values": {
+            "OD": 9.241,
+            "H": 5.238
+          }
+        },
+        {
+          "part_seq": 20,
+          "values": {
+            "OD": 9.231,
+            "H": 5.235
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {
+          "D2": 2,
+          "OD": 1,
+          "H": 1
+        },
+        "visual_sat": 8,
+        "visual_unsat": 7
+      },
+      "date_iso": "2025-10-08"
+    },
+    {
+      "filename": "2025-10-09Piston Cap.pdf",
+      "date": "2025-10-09",
+      "inspector": "Rob Moran",
+      "part": "Piston Cap",
+      "product": "OmniCheck",
+      "lot": "",
+      "po": "",
+      "drawing": "00001HG",
+      "delivery_qty": 20,
+      "insp_qty": 20,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "H"
+      ],
+      "notes": "dimensions were consistent, switched to visual inspection - checked the bolt hole circle and o-ring detent. 4 units failed.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.618,
+            "ID": 9.366,
+            "D1": 0.468,
+            "D2": 0.252,
+            "H": 0.429
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.62,
+            "ID": 9.33,
+            "D1": 0.463,
+            "D2": 0.254,
+            "H": 0.448
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.635,
+            "ID": 9.358,
+            "D1": 0.466,
+            "D2": 0.255,
+            "H": 0.43
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.636,
+            "ID": 9.37,
+            "D2": 0.255,
+            "H": 0.427
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.627,
+            "ID": 9.338,
+            "D1": 0.466,
+            "D2": 0.255,
+            "H": 0.433
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {
+          "D1": 1
+        },
+        "visual_sat": 2,
+        "visual_unsat": 2
+      },
+      "date_iso": "2025-10-09"
+    },
+    {
+      "filename": "2025-10-13Top Hat.pdf",
+      "date": "2025-10-13",
+      "inspector": "Rob Moran",
+      "part": "Top Hat",
+      "product": "OmniCheck",
+      "lot": "L00219",
+      "po": "",
+      "drawing": "000020J-I",
+      "delivery_qty": 15,
+      "insp_qty": 5,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "OD4",
+        "ID1",
+        "ID2",
+        "A"
+      ],
+      "notes": "",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD3": 1.618
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD3": 1.62
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD3": 1.62
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD3": 1.618
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD3": 1.62
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 6,
+        "visual_unsat": 4
+      },
+      "date_iso": "2025-10-13"
+    },
+    {
+      "filename": "2025-10-13Trachea Base.pdf",
+      "date": "2025-10-13",
+      "inspector": "Rob Moran",
+      "part": "Trachea Base",
+      "product": "OmniCheck",
+      "lot": "L00228",
+      "po": "",
+      "drawing": "0000214",
+      "delivery_qty": 15,
+      "insp_qty": 5,
+      "poi_labels": [
+        "OD",
+        "A",
+        "D1",
+        "ID1",
+        "ID2",
+        "ID3",
+        "H"
+      ],
+      "notes": "Bolt hole circle is off - holes need to be larger. see modified bases.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "ID1": 1.626
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "ID1": 1.626
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "ID1": 1.629
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "ID1": 1.625
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "ID1": 1.625
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 3,
+        "visual_unsat": 2
+      },
+      "date_iso": "2025-10-13"
+    },
+    {
+      "filename": "2025-10-14Top Hat.pdf",
+      "date": "2025-10-14",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Top Hat",
+      "product": "",
+      "lot": "L00219",
+      "po": "P000048",
+      "drawing": "000020J-I",
+      "delivery_qty": 15,
+      "insp_qty": 15,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "OD4",
+        "ID1",
+        "ID2",
+        "A"
+      ],
+      "notes": "",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.619,
+            "OD4": 1.529,
+            "ID1": 9.962,
+            "ID2": 1.398,
+            "A": 1.0
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.619,
+            "OD4": 1.531,
+            "ID1": 9.953,
+            "ID2": 1.399,
+            "A": 0.999
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.621,
+            "OD4": 1.529,
+            "ID1": 9.957,
+            "ID2": 1.398,
+            "A": 1.0
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.618,
+            "OD4": 1.527,
+            "ID1": 9.959,
+            "ID2": 1.398,
+            "A": 1.001
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD1": 11.97,
+            "OD2": 10.37,
+            "OD3": 1.62,
+            "OD4": 1.528,
+            "ID1": 9.959,
+            "ID2": 1.4,
+            "A": 0.999
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.621,
+            "OD4": 1.529,
+            "ID1": 9.956,
+            "ID2": 1.4,
+            "A": 1.0
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.62,
+            "OD4": 1.529,
+            "ID1": 9.952,
+            "ID2": 1.401,
+            "A": 1.0
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.621,
+            "OD4": 1.53,
+            "ID1": 9.955,
+            "ID2": 1.398,
+            "A": 0.999
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD1": 11.95,
+            "OD2": 10.37,
+            "OD3": 1.619,
+            "OD4": 1.529,
+            "ID1": 9.955,
+            "ID2": 1.399,
+            "A": 0.999
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD1": 11.96,
+            "OD2": 10.37,
+            "OD3": 1.621,
+            "OD4": 1.53,
+            "ID1": 9.96,
+            "ID2": 1.399,
+            "A": 1.001
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 10,
+        "visual_unsat": 10
+      },
+      "date_iso": "2025-10-14"
+    },
+    {
+      "filename": "2025-10-14Trachea Base.pdf",
+      "date": "2025-10-14",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Trachea Base",
+      "product": "ABMS",
+      "lot": "L00228",
+      "po": "P000048",
+      "drawing": "0000214",
+      "delivery_qty": 15,
+      "insp_qty": 10,
+      "poi_labels": [
+        "OD",
+        "A",
+        "D1",
+        "ID1",
+        "ID2",
+        "ID3",
+        "H"
+      ],
+      "notes": "",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "ID1": 1.628
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "ID1": 1.627
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "ID1": 1.628
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "ID1": 1.628
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "ID1": 1.629
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "ID1": 1.628
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "ID1": 1.628
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "ID1": 1.627
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "ID1": 1.628
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "ID1": 1.628
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 10,
+        "visual_unsat": 10
+      },
+      "date_iso": "2025-10-14"
+    },
+    {
+      "filename": "2025-10-15Piston Housing.pdf",
+      "date": "2025-10-15",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Housing",
+      "product": "OmniCheck",
+      "lot": "L00220",
+      "po": "P000048",
+      "drawing": "0000209-I",
+      "delivery_qty": 15,
+      "insp_qty": 10,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "ID",
+        "A",
+        "H"
+      ],
+      "notes": "Noticeable lip from grey plastic part on top of pvc. Lip is inconsistent, one side generally has minor lip with the rest of the circumference being smooth.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD1": 11.96,
+            "ID": 9.997,
+            "H": 9.543
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD1": 11.96,
+            "ID": 9.989,
+            "H": 9.552
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD1": 11.96,
+            "ID": 9.978,
+            "H": 9.544
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD1": 11.97,
+            "ID": 9.99,
+            "H": 9.545
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD1": 11.98,
+            "ID": 9.97,
+            "H": 9.554
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD1": 11.97,
+            "ID": 9.994,
+            "H": 9.547
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD1": 11.97,
+            "ID": 9.985,
+            "H": 9.539
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD1": 11.96,
+            "ID": 9.983,
+            "H": 9.536
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD1": 11.97,
+            "ID": 9.975,
+            "H": 9.542
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD1": 11.97,
+            "ID": 9.999,
+            "H": 9.539
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 10,
+        "visual_unsat": 10
+      },
+      "date_iso": "2025-10-15"
+    },
+    {
+      "filename": "2025-10-23Trachea Base.pdf",
+      "date": "2025-10-23",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Trachea Base",
+      "product": "OmniCheck",
+      "lot": "L00336",
+      "po": "SPEC",
+      "drawing": "0000214",
+      "delivery_qty": 3,
+      "insp_qty": 3,
+      "poi_labels": [
+        "OD",
+        "A",
+        "D1",
+        "ID1",
+        "ID2",
+        "ID3",
+        "H"
+      ],
+      "notes": "POI 1 (OD) is slightly smaller than specification. Fit aligns with top hat, all orings seat. Needs leak check.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 7.1,
+            "A": 6.98,
+            "D1": 1.755,
+            "ID1": 1.622,
+            "ID3": 1.375,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 7.11,
+            "A": 6.99,
+            "D1": 1.755,
+            "ID1": 1.626,
+            "ID3": 1.376,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 7.1,
+            "A": 6.98,
+            "D1": 1.754,
+            "ID1": 1.623,
+            "ID3": 1.376,
+            "H": 0.378
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 4,
+        "visual_unsat": 2
+      },
+      "date_iso": "2025-10-23"
+    },
+    {
+      "filename": "2025-11-26Top Hat.pdf",
+      "date": "2025-11-26",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Top Hat",
+      "product": "OmniCheck",
+      "lot": "L00265",
+      "po": "",
+      "drawing": "000020J-I",
+      "delivery_qty": 15,
+      "insp_qty": 15,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "OD4",
+        "ID1",
+        "ID2",
+        "A"
+      ],
+      "notes": "Some of the oring grooves don't appear uniform",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD3": 1.618
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD3": 1.618
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD3": 1.62
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD3": 1.617
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD3": 1.618
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD3": 1.616
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD3": 1.621
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD3": 1.615
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD3": 1.619
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD3": 1.616
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD3": 1.615
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD3": 1.612
+          }
+        },
+        {
+          "part_seq": 13,
+          "values": {
+            "OD3": 1.614
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "OD3": 1.613
+          }
+        },
+        {
+          "part_seq": 15,
+          "values": {
+            "OD3": 1.615
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {
+          "OD1": 15,
+          "OD4": 15
+        },
+        "fc": {},
+        "fail": {},
+        "visual_sat": 16,
+        "visual_unsat": 14
+      },
+      "date_iso": "2025-11-26"
+    },
+    {
+      "filename": "2025-11-26Trachea Flange.pdf",
+      "date": "2025-11-26",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Trachea Base",
+      "product": "OmniCheck",
+      "lot": "L00267",
+      "po": "",
+      "drawing": "0000214",
+      "delivery_qty": 15,
+      "insp_qty": 15,
+      "poi_labels": [
+        "OD",
+        "A",
+        "D1",
+        "ID1",
+        "ID2",
+        "ID3",
+        "H"
+      ],
+      "notes": "Bottom side of flange has surface finish irregularities across lot",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 7.104,
+            "A": 6.99,
+            "D1": 1.751,
+            "ID1": 1.62,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 7.101,
+            "A": 6.98,
+            "D1": 1.75,
+            "ID1": 1.619,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 7.1,
+            "A": 6.98,
+            "D1": 1.752,
+            "ID1": 1.62,
+            "H": 0.376
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 7.1,
+            "A": 6.99,
+            "D1": 1.754,
+            "ID1": 1.621,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 7.105,
+            "A": 6.98,
+            "D1": 1.75,
+            "ID1": 1.623,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 7.1,
+            "A": 6.98,
+            "D1": 1.752,
+            "ID1": 1.621,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 7.103,
+            "A": 6.98,
+            "D1": 1.754,
+            "ID1": 1.622,
+            "H": 0.375
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 7.103,
+            "A": 6.99,
+            "D1": 1.751,
+            "ID1": 1.62,
+            "H": 0.376
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 7.1,
+            "A": 6.97,
+            "D1": 1.753,
+            "ID1": 1.621,
+            "H": 0.375
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 7.098,
+            "A": 6.97,
+            "D1": 1.754,
+            "ID1": 1.62,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD": 7.101,
+            "A": 6.985,
+            "D1": 1.752,
+            "ID1": 1.613,
+            "H": 0.374
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD": 7.1,
+            "A": 6.984,
+            "D1": 1.751,
+            "ID1": 1.618,
+            "H": 0.375
+          }
+        },
+        {
+          "part_seq": 13,
+          "values": {
+            "OD": 7.101,
+            "A": 6.995,
+            "D1": 1.754,
+            "ID1": 1.615,
+            "H": 0.376
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "OD": 7.103,
+            "A": 6.976,
+            "D1": 1.754,
+            "ID1": 1.615,
+            "H": 0.376
+          }
+        },
+        {
+          "part_seq": 15,
+          "values": {
+            "OD": 7.1,
+            "A": 6.98,
+            "D1": 1.75,
+            "ID1": 1.619,
+            "H": 0.377
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {
+          "ID3": 15
+        },
+        "fc": {},
+        "fail": {},
+        "visual_sat": 12,
+        "visual_unsat": 10
+      },
+      "date_iso": "2025-11-26"
+    },
+    {
+      "filename": "2025-12-04Piston Body.pdf",
+      "date": "2025-12-04",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Body",
+      "product": "OmniCheck",
+      "lot": "L00495",
+      "po": "",
+      "drawing": "00001JC",
+      "delivery_qty": 9,
+      "insp_qty": 9,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "H"
+      ],
+      "notes": "Surface finish issues, all cosmetic",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.243,
+            "H": 5.234
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.232,
+            "H": 5.244
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.233,
+            "H": 5.24
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.242,
+            "H": 5.253
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.228,
+            "H": 5.244
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 9.235,
+            "H": 5.26
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 9.235,
+            "H": 5.251
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 9.235,
+            "H": 5.261
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 9.265,
+            "H": 5.262
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 9.237,
+            "H": 5.263
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {
+          "D1": 10,
+          "D2": 10,
+          "D3": 10,
+          "D4": 10,
+          "D5": 10,
+          "D6": 10
+        },
+        "fail": {},
+        "visual_sat": 5,
+        "visual_unsat": 5
+      },
+      "date_iso": "2025-12-04"
+    },
+    {
+      "filename": "2025-12-04Piston Cap.pdf",
+      "date": "2025-12-04",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Cap",
+      "product": "OmniCheck",
+      "lot": "L00255",
+      "po": "",
+      "drawing": "00001HG",
+      "delivery_qty": 6,
+      "insp_qty": 6,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "H"
+      ],
+      "notes": "",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.628,
+            "D1": 0.0752,
+            "H": 0.425
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.636,
+            "D1": 0.0745,
+            "H": 0.435
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.636,
+            "D1": 0.0783,
+            "H": 0.433
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.624,
+            "D1": 0.0777,
+            "H": 0.438
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.624,
+            "D1": 0.0748,
+            "H": 0.438
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 9.624,
+            "D1": 0.0733,
+            "H": 0.428
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 6,
+        "visual_unsat": 6
+      },
+      "date_iso": "2025-12-04"
+    },
+    {
+      "filename": "2025-12-08Piston Housing.pdf",
+      "date": "2025-12-08",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Housing",
+      "product": "OmniCheck",
+      "lot": "L00266",
+      "po": "",
+      "drawing": "0000209-I",
+      "delivery_qty": 5,
+      "insp_qty": 5,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "ID",
+        "A",
+        "H"
+      ],
+      "notes": "Internal surface finish irregularities, deemed inconsequential",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "ID": 9.984,
+            "H": 9.945
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "ID": 9.98,
+            "H": 9.546
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "ID": 9.983,
+            "H": 9.548
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "ID": 9.98,
+            "H": 9.543
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "ID": 9.996,
+            "H": 9.548
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 6,
+        "visual_unsat": 4
+      },
+      "date_iso": "2025-12-08"
+    },
+    {
+      "filename": "2026-01-05Trachea Base.pdf",
+      "date": "2026-01-05",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Trachea Base",
+      "product": "OmniCheck",
+      "lot": "L00534",
+      "po": "",
+      "drawing": "0000214",
+      "delivery_qty": 60,
+      "insp_qty": 60,
+      "poi_labels": [
+        "OD",
+        "A",
+        "D1",
+        "ID1",
+        "ID2",
+        "ID3",
+        "H"
+      ],
+      "notes": "Screw hole is old size, whole lot needs to be drilled out. Few units have plastic residue in oring grooves",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 7.093,
+            "A": 6.97,
+            "ID1": 1.617,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 7.102,
+            "A": 6.983,
+            "ID1": 1.6145,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 7.101,
+            "A": 6.988,
+            "ID1": 1.6135,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 7.095,
+            "A": 6.9765,
+            "ID1": 1.621,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 7.098,
+            "A": 6.983,
+            "ID1": 1.62,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 7.104,
+            "A": 6.9845,
+            "ID1": 1.623,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 7.1055,
+            "A": 6.9815,
+            "ID1": 1.623,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 7.104,
+            "A": 6.986,
+            "ID1": 1.623,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 7.0945,
+            "A": 6.979,
+            "ID1": 1.623,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 7.103,
+            "A": 6.9805,
+            "ID1": 1.6235,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD": 7.0845,
+            "A": 6.964,
+            "ID1": 1.6165,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD": 7.1,
+            "A": 6.9835,
+            "ID1": 1.6185,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 13,
+          "values": {
+            "OD": 7.105,
+            "A": 6.9915,
+            "ID1": 1.62,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "OD": 7.0975,
+            "A": 6.9905,
+            "ID1": 1.622,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 15,
+          "values": {
+            "OD": 7.1,
+            "A": 6.98,
+            "ID1": 1.6195,
+            "H": 0.3785
+          }
+        },
+        {
+          "part_seq": 16,
+          "values": {
+            "OD": 7.096,
+            "A": 6.977,
+            "ID1": 1.6205,
+            "H": 0.3785
+          }
+        },
+        {
+          "part_seq": 17,
+          "values": {
+            "OD": 7.0995,
+            "A": 6.981,
+            "ID1": 1.6215,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 18,
+          "values": {
+            "OD": 7.105,
+            "A": 6.9885,
+            "ID1": 1.623,
+            "H": 0.3755
+          }
+        },
+        {
+          "part_seq": 19,
+          "values": {
+            "OD": 7.106,
+            "A": 6.976,
+            "ID1": 1.621,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 20,
+          "values": {
+            "OD": 7.1035,
+            "A": 6.984,
+            "ID1": 1.6225,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 21,
+          "values": {
+            "OD": 7.101,
+            "A": 6.981,
+            "ID1": 1.6185,
+            "H": 0.379
+          }
+        },
+        {
+          "part_seq": 22,
+          "values": {
+            "OD": 7.0985,
+            "A": 6.9835,
+            "ID1": 1.62,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 23,
+          "values": {
+            "OD": 7.0965,
+            "A": 6.982,
+            "ID1": 1.618,
+            "H": 0.376
+          }
+        },
+        {
+          "part_seq": 24,
+          "values": {
+            "OD": 7.099,
+            "A": 6.979,
+            "ID1": 1.62,
+            "H": 0.3785
+          }
+        },
+        {
+          "part_seq": 25,
+          "values": {
+            "OD": 7.1025,
+            "A": 6.9885,
+            "ID1": 1.62,
+            "H": 0.3785
+          }
+        },
+        {
+          "part_seq": 26,
+          "values": {
+            "OD": 7.104,
+            "A": 6.988,
+            "ID1": 1.6215,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 27,
+          "values": {
+            "OD": 7.091,
+            "A": 6.989,
+            "ID1": 1.621,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 28,
+          "values": {
+            "OD": 7.099,
+            "A": 6.98,
+            "ID1": 1.6195,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 29,
+          "values": {
+            "OD": 7.0985,
+            "A": 6.9815,
+            "ID1": 1.622,
+            "H": 0.375
+          }
+        },
+        {
+          "part_seq": 30,
+          "values": {
+            "OD": 7.101,
+            "A": 6.98,
+            "ID1": 1.619,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 31,
+          "values": {
+            "OD": 7.101,
+            "A": 6.985,
+            "ID1": 1.6205,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 32,
+          "values": {
+            "OD": 7.1005,
+            "A": 6.988,
+            "ID1": 1.621,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 33,
+          "values": {
+            "OD": 7.104,
+            "A": 6.985,
+            "ID1": 1.6225,
+            "H": 0.375
+          }
+        },
+        {
+          "part_seq": 34,
+          "values": {
+            "OD": 7.1015,
+            "A": 6.9875,
+            "ID1": 1.6225,
+            "H": 0.3755
+          }
+        },
+        {
+          "part_seq": 35,
+          "values": {
+            "OD": 7.0935,
+            "A": 6.9805,
+            "ID1": 1.623,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 36,
+          "values": {
+            "OD": 7.1,
+            "A": 6.982,
+            "ID1": 1.6235,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 37,
+          "values": {
+            "OD": 7.102,
+            "A": 6.981,
+            "ID1": 1.622,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 38,
+          "values": {
+            "OD": 7.1025,
+            "A": 6.9865,
+            "ID1": 1.622,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 39,
+          "values": {
+            "OD": 7.0935,
+            "A": 6.9835,
+            "ID1": 1.6195,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 40,
+          "values": {
+            "OD": 7.098,
+            "A": 6.98,
+            "ID1": 1.6215,
+            "H": 0.375
+          }
+        },
+        {
+          "part_seq": 41,
+          "values": {
+            "OD": 7.104,
+            "A": 6.983,
+            "ID1": 1.6185,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 42,
+          "values": {
+            "OD": 7.096,
+            "A": 6.977,
+            "ID1": 1.6195,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 43,
+          "values": {
+            "OD": 7.0945,
+            "A": 6.9775,
+            "ID1": 1.62,
+            "H": 0.3765
+          }
+        },
+        {
+          "part_seq": 44,
+          "values": {
+            "OD": 7.098,
+            "A": 6.981,
+            "ID1": 1.6205,
+            "H": 0.379
+          }
+        },
+        {
+          "part_seq": 45,
+          "values": {
+            "OD": 7.104,
+            "A": 6.983,
+            "ID1": 1.62,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 46,
+          "values": {
+            "OD": 7.0915,
+            "A": 6.975,
+            "ID1": 1.622,
+            "H": 0.3805
+          }
+        },
+        {
+          "part_seq": 47,
+          "values": {
+            "OD": 7.103,
+            "A": 6.9845,
+            "ID1": 1.62,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 48,
+          "values": {
+            "OD": 7.102,
+            "A": 6.984,
+            "ID1": 1.623,
+            "H": 0.3795
+          }
+        },
+        {
+          "part_seq": 49,
+          "values": {
+            "OD": 7.098,
+            "A": 6.979,
+            "ID1": 1.6215,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 50,
+          "values": {
+            "OD": 7.0965,
+            "A": 6.98,
+            "ID1": 1.6225,
+            "H": 0.3785
+          }
+        },
+        {
+          "part_seq": 51,
+          "values": {
+            "OD": 7.105,
+            "A": 6.9845,
+            "ID1": 1.6195,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 52,
+          "values": {
+            "OD": 7.0975,
+            "A": 6.9725,
+            "ID1": 1.6225,
+            "H": 0.379
+          }
+        },
+        {
+          "part_seq": 53,
+          "values": {
+            "OD": 7.1035,
+            "A": 6.9835,
+            "ID1": 1.6195,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 54,
+          "values": {
+            "OD": 7.103,
+            "A": 6.9845,
+            "ID1": 1.6195,
+            "H": 0.3795
+          }
+        },
+        {
+          "part_seq": 55,
+          "values": {
+            "OD": 7.1025,
+            "A": 6.983,
+            "ID1": 1.6225,
+            "H": 0.3775
+          }
+        },
+        {
+          "part_seq": 56,
+          "values": {
+            "OD": 7.0995,
+            "A": 6.9875,
+            "ID1": 1.62,
+            "H": 0.377
+          }
+        },
+        {
+          "part_seq": 57,
+          "values": {
+            "OD": 7.1015,
+            "A": 6.985,
+            "ID1": 1.6205,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 58,
+          "values": {
+            "OD": 7.0965,
+            "A": 6.9735,
+            "ID1": 1.6205,
+            "H": 0.3795
+          }
+        },
+        {
+          "part_seq": 59,
+          "values": {
+            "OD": 7.101,
+            "A": 6.98,
+            "ID1": 1.6205,
+            "H": 0.378
+          }
+        },
+        {
+          "part_seq": 60,
+          "values": {
+            "OD": 7.0965,
+            "A": 6.981,
+            "ID1": 1.621,
+            "H": 0.378
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {
+          "ID3": 60
+        },
+        "fc": {},
+        "fail": {},
+        "visual_sat": 56,
+        "visual_unsat": 56
+      },
+      "date_iso": "2026-01-05"
+    },
+    {
+      "filename": "2026-01-07Top Hat.pdf",
+      "date": "2026-01-07",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Top Hat",
+      "product": "OmniCheck",
+      "lot": "L00459",
+      "po": "",
+      "drawing": "000020J-I",
+      "delivery_qty": 12,
+      "insp_qty": 12,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "OD4",
+        "ID1",
+        "ID2",
+        "A"
+      ],
+      "notes": "Two units were visually determined to have uneven oring grooves on bottom track. Fit of trachea base for both units was OK. Both units were marked with a sticker to pay special attention to leak rate.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD3": 1.616,
+            "OD4": 1.529,
+            "ID2": 1.3875
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD3": 1.619,
+            "OD4": 1.5295,
+            "ID2": 1.4
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD3": 1.6185,
+            "OD4": 1.53,
+            "ID2": 1.4
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD3": 1.615,
+            "OD4": 1.525,
+            "ID2": 1.395
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD3": 1.615,
+            "OD4": 1.5255,
+            "ID2": 1.395
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD3": 1.616,
+            "OD4": 1.5275,
+            "ID2": 1.397
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD3": 1.6155,
+            "OD4": 1.525,
+            "ID2": 1.3985
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD3": 1.616,
+            "OD4": 1.528,
+            "ID2": 1.399
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD3": 1.617,
+            "OD4": 1.526,
+            "ID2": 1.4
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD3": 1.616,
+            "OD4": 1.525,
+            "ID2": 1.387
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD3": 1.617,
+            "OD4": 1.5275,
+            "ID2": 1.399
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD3": 1.619,
+            "OD4": 1.528,
+            "ID2": 1.3995
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {
+          "OD1": 12
+        },
+        "fc": {},
+        "fail": {},
+        "visual_sat": 12,
+        "visual_unsat": 12
+      },
+      "date_iso": "2026-01-07"
+    },
+    {
+      "filename": "2026-01-09Piston Housing.pdf",
+      "date": "2026-01-09",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Housing",
+      "product": "",
+      "lot": "L00591",
+      "po": "",
+      "drawing": "0000209-I",
+      "delivery_qty": 14,
+      "insp_qty": 14,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "ID",
+        "A",
+        "H"
+      ],
+      "notes": "Piston cage shape is not perfectly round -- measuring diameter at different spots gives different answers ~ +/- .03 inches. Recorded diameter measurements are average of 3 measurements at different spots.\r\rChamfering on screw hole side also appears uneven across lot",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "ID": 9.9885,
+            "H": 9.55
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "ID": 9.9965,
+            "H": 9.5355
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "ID": 9.9975,
+            "H": 9.5675
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "ID": 10.0,
+            "H": 9.545
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "ID": 9.9853,
+            "H": 9.549
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "ID": 9.9777,
+            "H": 9.546
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "ID": 9.9843,
+            "H": 9.576
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "ID": 9.9726,
+            "H": 9.5375
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "ID": 9.9875,
+            "H": 9.548
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "ID": 9.9663,
+            "H": 9.5415
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "ID": 9.9857,
+            "H": 9.5545
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "ID": 9.9967,
+            "H": 9.5455
+          }
+        },
+        {
+          "part_seq": 13,
+          "values": {
+            "ID": 9.9707,
+            "H": 9.549
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "ID": 9.9863,
+            "H": 9.537
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 14,
+        "visual_unsat": 14
+      },
+      "date_iso": "2026-01-09"
+    },
+    {
+      "filename": "2026-01-12Piston Body.pdf",
+      "date": "2026-01-12",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Body",
+      "product": "OmniCheck",
+      "lot": "",
+      "po": "",
+      "drawing": "00001JC",
+      "delivery_qty": 19,
+      "insp_qty": 19,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "H"
+      ],
+      "notes": "Units need better cleanup processing after being removed from printing trays.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.2575,
+            "H": 5.251
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.245,
+            "H": 5.2495
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.2455,
+            "H": 5.2515
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.2465,
+            "H": 5.2485
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.258,
+            "H": 5.236
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 9.253,
+            "H": 5.25
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 9.259,
+            "H": 5.2435
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 9.2455,
+            "H": 5.246
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 9.247,
+            "H": 5.2505
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 9.2435,
+            "H": 5.2535
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD": 9.259,
+            "H": 5.23
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD": 9.252,
+            "H": 5.2315
+          }
+        },
+        {
+          "part_seq": 13,
+          "values": {
+            "OD": 9.2535,
+            "H": 5.2345
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "OD": 9.248,
+            "H": 5.2415
+          }
+        },
+        {
+          "part_seq": 15,
+          "values": {
+            "OD": 9.2445,
+            "H": 5.2425
+          }
+        },
+        {
+          "part_seq": 16,
+          "values": {
+            "OD": 9.2485,
+            "H": 5.2655
+          }
+        },
+        {
+          "part_seq": 17,
+          "values": {
+            "OD": 9.2565,
+            "H": 5.2395
+          }
+        },
+        {
+          "part_seq": 18,
+          "values": {
+            "OD": 9.259,
+            "H": 5.2315
+          }
+        },
+        {
+          "part_seq": 19,
+          "values": {
+            "OD": 9.243,
+            "H": 5.249
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {
+          "D1": 19,
+          "D2": 19,
+          "D3": 19,
+          "D4": 19,
+          "D5": 19
+        },
+        "fc": {},
+        "fail": {},
+        "visual_sat": 8,
+        "visual_unsat": 8
+      },
+      "date_iso": "2026-01-12"
+    },
+    {
+      "filename": "2026-01-20Piston Cap.pdf",
+      "date": "2026-01-20",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Cap",
+      "product": "OmniCheck",
+      "lot": "L00255",
+      "po": "",
+      "drawing": "00001HG",
+      "delivery_qty": 11,
+      "insp_qty": 11,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "H"
+      ],
+      "notes": "O-ring groove holes are not perfectly circular. Groove depths are sometimes shallow out of tolerance. Engineering and functional testing suggests that new tolerance of .059 to .079 should suffice. With this relaxed tolerance, all groove depths pass. All other features acceptable. Supplier control is doubted, however.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.634,
+            "ID": 9.355,
+            "D1": 0.4698,
+            "D2": 0.0248
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.627,
+            "ID": 9.354,
+            "D1": 0.475,
+            "D2": 0.0251
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.628,
+            "ID": 9.374,
+            "D1": 0.4701,
+            "D2": 0.0251
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.628,
+            "ID": 9.3665,
+            "D1": 0.4776,
+            "D2": 0.025
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.631,
+            "ID": 9.378,
+            "D1": 0.4737,
+            "D2": 0.0251
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 9.625,
+            "ID": 9.358,
+            "D1": 0.4775,
+            "D2": 0.0251
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 9.628,
+            "ID": 9.361,
+            "D1": 0.4719,
+            "D2": 0.0249
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 9.629,
+            "ID": 9.368,
+            "D1": 0.4668,
+            "D2": 0.0251
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 9.629,
+            "ID": 9.383,
+            "D1": 0.4649,
+            "D2": 0.025
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 9.632,
+            "ID": 9.372,
+            "D1": 0.4702,
+            "D2": 0.025
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD": 9.629,
+            "ID": 9.366,
+            "D1": 0.4627,
+            "D2": 0.025
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 12,
+        "visual_unsat": 10
+      },
+      "date_iso": "2026-01-20"
+    },
+    {
+      "filename": "2026-02-23Piston Cap.pdf",
+      "date": "2026-02-23",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Cap",
+      "product": "",
+      "lot": "L00629",
+      "po": "",
+      "drawing": "00001HG",
+      "delivery_qty": 47,
+      "insp_qty": 27,
+      "poi_labels": [
+        "OD",
+        "ID",
+        "D1",
+        "D2",
+        "H"
+      ],
+      "notes": "Multiple finishing issues identified:\r- some holes on either side have cracking or chipping around the edge\r- some holes are visually offcenter. Many are not perfectly circular (+/- .005)\r- many holes have residue left in o-ring groove\r- surface finish of flat parts varies throughout lot\r- 20/47 fail on visual (cracked hole or offcenter hole)\r\rPOI 2 is the thickness of the concentric outer ridge (avg measurement)\rPOI 6 is the depth of the hole (avg measurement)\r\rhole depth seems too high variance (avg measurements may not reflect this). Thickness of ridge and height of cap also seem to have higher than expected variance. Avg measurements only taken.",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD": 9.636,
+            "ID": 0.14,
+            "D1": 0.466,
+            "D2": 0.249,
+            "H": 0.43
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD": 9.64,
+            "ID": 0.13,
+            "D1": 0.473,
+            "D2": 0.251,
+            "H": 0.432
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD": 9.634,
+            "ID": 0.129,
+            "D1": 0.482,
+            "D2": 0.251,
+            "H": 0.42
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD": 9.627,
+            "ID": 0.126,
+            "D1": 0.475,
+            "D2": 0.25,
+            "H": 0.47
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD": 9.627,
+            "ID": 0.126,
+            "D1": 0.471,
+            "D2": 0.25,
+            "H": 0.433
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD": 9.627,
+            "ID": 0.128,
+            "D1": 0.473,
+            "D2": 0.25,
+            "H": 0.435
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD": 9.615,
+            "ID": 0.125,
+            "D1": 0.475,
+            "D2": 0.251,
+            "H": 0.434
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD": 9.628,
+            "ID": 0.128,
+            "D1": 0.471,
+            "D2": 0.251,
+            "H": 0.432
+          }
+        },
+        {
+          "part_seq": 9,
+          "values": {
+            "OD": 9.626,
+            "ID": 0.123,
+            "D1": 0.471,
+            "D2": 0.253,
+            "H": 0.44
+          }
+        },
+        {
+          "part_seq": 10,
+          "values": {
+            "OD": 9.625,
+            "ID": 0.123,
+            "D1": 0.472,
+            "D2": 0.252,
+            "H": 0.431
+          }
+        },
+        {
+          "part_seq": 11,
+          "values": {
+            "OD": 9.618,
+            "ID": 0.126,
+            "D1": 0.476,
+            "D2": 0.251,
+            "H": 0.437
+          }
+        },
+        {
+          "part_seq": 12,
+          "values": {
+            "OD": 9.624,
+            "ID": 0.125,
+            "D1": 0.472,
+            "D2": 0.25,
+            "H": 0.445
+          }
+        },
+        {
+          "part_seq": 13,
+          "values": {
+            "OD": 9.627,
+            "ID": 0.125,
+            "D1": 0.478,
+            "D2": 0.252,
+            "H": 0.43
+          }
+        },
+        {
+          "part_seq": 14,
+          "values": {
+            "OD": 9.63,
+            "ID": 0.124,
+            "D1": 0.475,
+            "D2": 0.253,
+            "H": 0.458
+          }
+        },
+        {
+          "part_seq": 15,
+          "values": {
+            "OD": 9.635,
+            "ID": 0.123,
+            "D1": 0.473,
+            "D2": 0.253,
+            "H": 0.45
+          }
+        },
+        {
+          "part_seq": 16,
+          "values": {
+            "OD": 9.628,
+            "ID": 0.127,
+            "D1": 0.476,
+            "D2": 0.251,
+            "H": 0.43
+          }
+        },
+        {
+          "part_seq": 17,
+          "values": {
+            "OD": 9.624,
+            "ID": 0.123,
+            "D1": 0.472,
+            "D2": 0.252,
+            "H": 0.44
+          }
+        },
+        {
+          "part_seq": 18,
+          "values": {
+            "OD": 9.626,
+            "ID": 0.125,
+            "D1": 0.475,
+            "D2": 0.251,
+            "H": 0.434
+          }
+        },
+        {
+          "part_seq": 19,
+          "values": {
+            "OD": 9.634,
+            "ID": 0.123,
+            "D1": 0.469,
+            "D2": 0.25,
+            "H": 0.438
+          }
+        },
+        {
+          "part_seq": 20,
+          "values": {
+            "OD": 9.632,
+            "ID": 0.122,
+            "D1": 0.476,
+            "D2": 0.253,
+            "H": 0.42
+          }
+        },
+        {
+          "part_seq": 21,
+          "values": {
+            "OD": 9.635,
+            "ID": 0.124,
+            "D1": 0.476,
+            "D2": 0.251,
+            "H": 0.44
+          }
+        },
+        {
+          "part_seq": 22,
+          "values": {
+            "OD": 9.632,
+            "ID": 0.123,
+            "D1": 0.479,
+            "D2": 0.253,
+            "H": 0.451
+          }
+        },
+        {
+          "part_seq": 23,
+          "values": {
+            "OD": 9.628,
+            "ID": 0.125,
+            "D1": 0.478,
+            "D2": 0.252,
+            "H": 0.435
+          }
+        },
+        {
+          "part_seq": 24,
+          "values": {
+            "OD": 9.633,
+            "ID": 0.125,
+            "D1": 0.474,
+            "D2": 0.255,
+            "H": 0.439
+          }
+        },
+        {
+          "part_seq": 25,
+          "values": {
+            "OD": 9.634,
+            "ID": 0.124,
+            "D1": 0.475,
+            "D2": 0.249,
+            "H": 0.444
+          }
+        },
+        {
+          "part_seq": 26,
+          "values": {
+            "OD": 9.619,
+            "ID": 0.123,
+            "D1": 0.477,
+            "D2": 0.251,
+            "H": 0.424
+          }
+        },
+        {
+          "part_seq": 27,
+          "values": {
+            "OD": 9.624,
+            "ID": 0.127,
+            "D1": 0.472,
+            "D2": 0.252,
+            "H": 0.435
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 36,
+        "visual_unsat": 35
+      },
+      "date_iso": "2026-02-23"
+    },
+    {
+      "filename": "2026-03-27Piston Housing.pdf",
+      "date": "2026-03-27",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Piston Housing",
+      "product": "OmniCheck",
+      "lot": "",
+      "po": "031326-2",
+      "drawing": "0000209-I",
+      "delivery_qty": 8,
+      "insp_qty": 8,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "ID",
+        "A",
+        "H"
+      ],
+      "notes": "Heights are centered -0.05 away from target value, with some outliers even more severely on the short side (~ -0.1 in off)",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "ID": 9.955,
+            "H": 9.438
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "ID": 9.985,
+            "H": 9.462
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "ID": 9.98,
+            "H": 9.475
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "ID": 9.979,
+            "H": 9.473
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "ID": 9.956,
+            "H": 9.48
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "ID": 10.035,
+            "H": 9.472
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "ID": 9.952,
+            "H": 9.485
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "ID": 9.965,
+            "H": 9.445
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 4,
+        "visual_unsat": 4
+      },
+      "date_iso": "2026-03-27"
+    },
+    {
+      "filename": "2026-03-27Top Hat.pdf",
+      "date": "2026-03-27",
+      "inspector": "Sieggy Bennicoff Yundt",
+      "part": "Top Hat",
+      "product": "OmniCheck",
+      "lot": "",
+      "po": "031326",
+      "drawing": "000020J-I",
+      "delivery_qty": 8,
+      "insp_qty": 8,
+      "poi_labels": [
+        "OD1",
+        "OD2",
+        "OD3",
+        "OD4",
+        "ID1",
+        "ID2",
+        "A"
+      ],
+      "notes": "orings do not sit uniformly in lip. double seal still effective",
+      "measurements": [
+        {
+          "part_seq": 1,
+          "values": {
+            "OD1": 1.62,
+            "OD2": 1.528,
+            "OD4": 0.099
+          }
+        },
+        {
+          "part_seq": 2,
+          "values": {
+            "OD1": 1.619,
+            "OD2": 1.526,
+            "OD4": 0.098
+          }
+        },
+        {
+          "part_seq": 3,
+          "values": {
+            "OD1": 1.618,
+            "OD2": 1.524,
+            "OD4": 0.095
+          }
+        },
+        {
+          "part_seq": 4,
+          "values": {
+            "OD1": 1.62,
+            "OD2": 1.525,
+            "OD4": 0.099
+          }
+        },
+        {
+          "part_seq": 5,
+          "values": {
+            "OD1": 1.618,
+            "OD2": 1.525,
+            "OD4": 0.096
+          }
+        },
+        {
+          "part_seq": 6,
+          "values": {
+            "OD1": 1.619,
+            "OD2": 1.526,
+            "OD4": 0.093
+          }
+        },
+        {
+          "part_seq": 7,
+          "values": {
+            "OD1": 1.62,
+            "OD2": 1.525,
+            "OD4": 0.097
+          }
+        },
+        {
+          "part_seq": 8,
+          "values": {
+            "OD1": 1.619,
+            "OD2": 1.525,
+            "OD4": 0.095
+          }
+        }
+      ],
+      "attribute_checks": {
+        "ft": {},
+        "fc": {},
+        "fail": {},
+        "visual_sat": 8,
+        "visual_unsat": 8
+      },
+      "date_iso": "2026-03-27"
+    }
+  ]
+}

@@ -4,3 +4,4 @@ __pycache__/
 SPEC.md
 TODO.md
 output/
+logs/

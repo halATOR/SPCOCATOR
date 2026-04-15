@@ -106,6 +106,181 @@ def detect_ooc(values, stats):
     return flags
 
 
+def chi2_sf(x, k):
+    """Survival function (1 - CDF) for chi-squared distribution via regularized gamma.
+    Uses series expansion of the lower incomplete gamma function."""
+    if x <= 0:
+        return 1.0
+    a = k / 2.0
+    x2 = x / 2.0
+    # Regularized lower incomplete gamma via series expansion
+    total = 0.0
+    term = 1.0 / a
+    total = term
+    for n in range(1, 300):
+        term *= x2 / (a + n)
+        total += term
+        if abs(term) < 1e-15:
+            break
+    # gamma_lower / Gamma(a) = e^(-x2) * x2^a * total / Gamma(a)
+    # Use log-gamma for numerical stability
+    log_gamma_a = math.lgamma(a)
+    log_p = a * math.log(x2) - x2 + math.log(total) - log_gamma_a
+    p = math.exp(log_p) if log_p < 0 else 1.0
+    return max(0.0, min(1.0, 1.0 - p))
+
+
+def welch_t_test(group1, group2):
+    """Two-sample Welch's t-test. Returns (t_stat, p_value, df)."""
+    n1, n2 = len(group1), len(group2)
+    if n1 < 2 or n2 < 2:
+        return None, None, None
+    a1, a2 = np.array(group1), np.array(group2)
+    m1, m2 = float(np.mean(a1)), float(np.mean(a2))
+    v1, v2 = float(np.var(a1, ddof=1)), float(np.var(a2, ddof=1))
+    if v1 == 0 and v2 == 0:
+        return 0.0, 1.0, n1 + n2 - 2
+    se = math.sqrt(v1 / n1 + v2 / n2)
+    if se == 0:
+        return 0.0, 1.0, n1 + n2 - 2
+    t_stat = (m1 - m2) / se
+    # Welch-Satterthwaite degrees of freedom
+    num = (v1 / n1 + v2 / n2) ** 2
+    den = (v1 / n1) ** 2 / (n1 - 1) + (v2 / n2) ** 2 / (n2 - 1)
+    df = num / den if den > 0 else n1 + n2 - 2
+    # Approximate two-tailed p-value using normal distribution for large df
+    # For small df, use the beta-function approximation
+    x = df / (df + t_stat ** 2)
+    # Regularized incomplete beta for t-distribution CDF
+    # For simplicity, use normal approx which is reasonable for df > 5
+    from math import erf
+    z = abs(t_stat) * math.sqrt(1 - 1 / (4 * df) - 7 / (120 * df * df))  # Adjusted normal approx
+    p_value = 2 * (1 - 0.5 * (1 + erf(z / math.sqrt(2))))
+    return float(t_stat), float(p_value), float(df)
+
+
+def kruskal_wallis(*groups):
+    """Kruskal-Wallis H test for k independent samples. Returns (H_stat, p_value)."""
+    groups = [g for g in groups if len(g) >= 1]
+    k = len(groups)
+    if k < 2:
+        return None, None
+
+    # Combine all values and rank
+    all_vals = []
+    group_ids = []
+    for i, g in enumerate(groups):
+        for v in g:
+            all_vals.append(v)
+            group_ids.append(i)
+
+    N = len(all_vals)
+    if N < 3:
+        return None, None
+
+    # Rank (average rank for ties)
+    indexed = sorted(range(N), key=lambda i: all_vals[i])
+    ranks = [0.0] * N
+    i = 0
+    while i < N:
+        j = i
+        while j < N and all_vals[indexed[j]] == all_vals[indexed[i]]:
+            j += 1
+        avg_rank = (i + 1 + j) / 2.0  # 1-based average rank
+        for m in range(i, j):
+            ranks[indexed[m]] = avg_rank
+        i = j
+
+    # Compute H statistic
+    group_rank_sums = [0.0] * k
+    group_sizes = [0] * k
+    for idx in range(N):
+        gid = group_ids[idx]
+        group_rank_sums[gid] += ranks[idx]
+        group_sizes[gid] += 1
+
+    H = 0.0
+    for i in range(k):
+        ni = group_sizes[i]
+        if ni == 0:
+            continue
+        Ri = group_rank_sums[i]
+        H += (Ri ** 2) / ni
+    H = (12.0 / (N * (N + 1))) * H - 3.0 * (N + 1)
+
+    # Tie correction
+    tie_counts = {}
+    for r in ranks:
+        tie_counts[r] = tie_counts.get(r, 0) + 1
+    tie_correction = 1.0 - sum(t ** 3 - t for t in tie_counts.values()) / (N ** 3 - N)
+    if tie_correction > 0:
+        H /= tie_correction
+
+    # p-value from chi-squared distribution with k-1 df
+    df = k - 1
+    p_value = chi2_sf(H, df)
+
+    return float(H), float(p_value)
+
+
+def compute_config_stratification(records, metrics):
+    """Run Welch's t-test or Kruskal-Wallis for each metric across config types."""
+    config_types = sorted(set(r.get("config_type", "Unknown") for r in records))
+    results = []
+
+    for key, label, section, usl in metrics:
+        # Group values by config type
+        groups = {}
+        for r in records:
+            if key not in r:
+                continue
+            ct = r.get("config_type", "Unknown")
+            groups.setdefault(ct, []).append(r[key])
+
+        # Filter to groups with >= 2 observations
+        valid_groups = {ct: vals for ct, vals in groups.items() if len(vals) >= 2}
+
+        if len(valid_groups) < 2:
+            results.append({
+                "metric": label,
+                "key": key,
+                "test": "N/A",
+                "stat": None,
+                "p_value": None,
+                "significant": False,
+                "note": "Fewer than 2 config types with sufficient data",
+                "groups": {ct: {"n": len(v), "mean": round(float(np.mean(v)), 4), "std": round(float(np.std(v, ddof=1)), 4) if len(v) > 1 else 0} for ct, v in groups.items()},
+            })
+            continue
+
+        group_names = sorted(valid_groups.keys())
+        group_values = [valid_groups[ct] for ct in group_names]
+
+        if len(group_names) == 2:
+            t_stat, p_val, df = welch_t_test(group_values[0], group_values[1])
+            test_name = "Welch's t-test"
+            stat_val = t_stat
+        else:
+            h_stat, p_val = kruskal_wallis(*group_values)
+            test_name = f"Kruskal-Wallis (k={len(group_names)})"
+            stat_val = h_stat
+
+        significant = p_val is not None and p_val < 0.05
+
+        results.append({
+            "metric": label,
+            "key": key,
+            "test": test_name,
+            "stat": round(stat_val, 4) if stat_val is not None else None,
+            "p_value": round(p_val, 4) if p_val is not None else None,
+            "significant": significant,
+            "note": "",
+            "groups": {ct: {"n": len(v), "mean": round(float(np.mean(v)), 4), "std": round(float(np.std(v, ddof=1)), 4) if len(v) > 1 else 0} for ct, v in groups.items()},
+        })
+
+    return results
+
+
 def build_chart_data(records, metrics):
     """Build all chart data for the dashboard."""
     charts = []
@@ -202,12 +377,16 @@ def generate_html(charts, records, meta=None):
         ref_equipment = [r for r in equip.get("reference_sensors", []) if r.get("manufacturer")]
         daq_equip = equip.get("daq", {})
 
+    # Config type stratification analysis
+    strat_results = compute_config_stratification(records, METRICS)
+
     charts_json = json.dumps(charts)
     config_colors_json = json.dumps(CONFIG_COLORS)
     technicians_json = json.dumps(technicians)
     events_json = json.dumps(events)
     ref_equipment_json = json.dumps(ref_equipment)
     daq_equip_json = json.dumps(daq_equip)
+    strat_json = json.dumps(strat_results)
 
     # Load MAC→serial map if available
     mac_map_path = PROJECT_DIR / "data" / "mac_serial_map.json"
@@ -297,7 +476,7 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
 .drop-zone .drop-icon {{ font-size: 24px; margin-bottom: 5px; }}
 .drop-zone .drop-status {{ margin-top: 8px; font-size: 12px; color: #4CAF50; display: none; }}
 @media print {{
-  .controls, .tab-bar, .tech-filter, #printBtn {{ display: none !important; }}
+  .controls, .tab-bar, .tech-filter, #printBtn, [style*="0d1117"] {{ display: none !important; }}
   .tab-content {{ display: block !important; }}
   .header {{ padding: 10px 20px; }}
   .section {{ padding: 10px 20px; page-break-inside: avoid; }}
@@ -308,6 +487,12 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
 </style>
 </head>
 <body>
+
+<div style="background:#0d1117;padding:8px 30px;display:flex;gap:10px;align-items:center">
+  <span style="color:#888;font-size:13px;font-weight:600;margin-right:15px">SPCOCATOR</span>
+  <a href="./OMNIcheck_SPC_Dashboard.html" style="color:white;text-decoration:none;padding:6px 14px;border-radius:4px;font-size:13px;font-weight:500;background:#1a1a2e">Final Inspection</a>
+  <a href="./Receipt_Inspection_SPC_Dashboard.html" style="color:#aaa;text-decoration:none;padding:6px 14px;border-radius:4px;font-size:13px;font-weight:500">Receipt Inspection</a>
+</div>
 
 <div class="header">
   <div>
@@ -328,6 +513,7 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
 <div class="tab-bar" id="tabBar">
   <button class="active" data-tab="spc">SPC Charts</button>
   <button data-tab="tech">Technician Analysis</button>
+  <button data-tab="strat">Config Stratification</button>
 </div>
 
 <div class="tab-content active" id="tab-spc">
@@ -412,6 +598,18 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
   </div>
 </div><!-- end tab-tech -->
 
+<div class="tab-content" id="tab-strat">
+  <div class="section">
+    <h2>Configuration Type Stratification Analysis</h2>
+    <p class="low-n-note">Tests whether metric distributions differ significantly across configuration types (MSA Firetech, AVON, ATOR Labs). Kruskal-Wallis H test for 3 groups; Welch's t-test for 2 groups. Significance level: &alpha; = 0.05. AVON (n=3) results should be interpreted cautiously due to small sample size.</p>
+    <div id="stratTableContainer"></div>
+  </div>
+  <div class="section">
+    <h2>Per-Metric Box Plots by Configuration</h2>
+    <div class="chart-grid" id="stratBoxPlots"></div>
+  </div>
+</div><!-- end tab-strat -->
+
 <script>
 const CHARTS = {charts_json};
 const CONFIG_COLORS = {config_colors_json};
@@ -420,6 +618,7 @@ const EVENTS = {events_json};
 const REF_EQUIPMENT = {ref_equipment_json};
 const DAQ_EQUIP = {daq_equip_json};
 const MAC_MAP = {mac_map_json};
+const STRAT_RESULTS = {strat_json};
 const DEFAULT_COLOR = '#999';
 
 let currentWindow = 'all';
@@ -806,10 +1005,98 @@ document.getElementById('tabBar').addEventListener('click', e => {{
       renderTechAnalysis();
       techRendered = true;
     }}
+    if (e.target.dataset.tab === 'strat' && !stratRendered) {{
+      renderStratAnalysis();
+      stratRendered = true;
+    }}
   }}
 }});
 
 let techRendered = false;
+let stratRendered = false;
+
+function renderStratAnalysis() {{
+  // Stratification summary table
+  const container = document.getElementById('stratTableContainer');
+  let html = '<table class="tech-table"><thead><tr><th>Metric</th><th>Test</th><th>Statistic</th><th>p-value</th><th>Significant?</th>';
+  const configTypes = Object.keys(CONFIG_COLORS);
+  configTypes.forEach(ct => {{ html += `<th>${{ct}}<br>n / mean / std</th>`; }});
+  html += '</tr></thead><tbody>';
+
+  STRAT_RESULTS.forEach(r => {{
+    const sigClass = r.significant ? 'style="color:#F44336;font-weight:600"' : '';
+    const sigText = r.significant ? 'YES' : 'no';
+    html += `<tr><td>${{r.metric}}</td><td>${{r.test}}</td><td>${{r.stat !== null ? r.stat.toFixed(4) : '-'}}</td><td ${{sigClass}}>${{r.p_value !== null ? r.p_value.toFixed(4) : '-'}}</td><td ${{sigClass}}>${{sigText}}</td>`;
+    configTypes.forEach(ct => {{
+      const g = r.groups[ct];
+      if (g) {{
+        html += `<td>${{g.n}} / ${{g.mean.toFixed(4)}} / ${{g.std.toFixed(4)}}</td>`;
+      }} else {{
+        html += '<td>-</td>';
+      }}
+    }});
+    html += '</tr>';
+  }});
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Box plots per metric by config type
+  const plotContainer = document.getElementById('stratBoxPlots');
+  CHARTS.forEach(chart => {{
+    const card = document.createElement('div');
+    card.className = 'chart-card';
+    const chartId = `strat-box-${{chart.key}}`;
+    card.innerHTML = `<div class="chart-title">${{chart.label}}</div><div class="chart-container" id="${{chartId}}"></div>`;
+    plotContainer.appendChild(card);
+
+    const traces = [];
+    configTypes.forEach(ct => {{
+      const vals = [];
+      for (let i = 0; i < chart.values.length; i++) {{
+        if (chart.configs[i] === ct) vals.push(chart.values[i]);
+      }}
+      if (vals.length > 0) {{
+        traces.push({{
+          type: 'box',
+          y: vals,
+          name: ct,
+          marker: {{ color: CONFIG_COLORS[ct] || DEFAULT_COLOR }},
+          boxpoints: 'all',
+          jitter: 0.3,
+          pointpos: -1.5,
+        }});
+      }}
+    }});
+
+    // Add spec lines as shapes
+    const shapes = [];
+    if (chart.usl !== null) {{
+      shapes.push({{ type: 'line', y0: chart.usl, y1: chart.usl, x0: -0.5, x1: configTypes.length - 0.5, xref: 'x', line: {{ color: '#FF9800', width: 1.5, dash: 'dot' }} }});
+    }}
+    if (chart.lsl !== null) {{
+      shapes.push({{ type: 'line', y0: chart.lsl, y1: chart.lsl, x0: -0.5, x1: configTypes.length - 0.5, xref: 'x', line: {{ color: '#FF9800', width: 1.5, dash: 'dot' }} }});
+    }}
+
+    // Add p-value annotation
+    const strat = STRAT_RESULTS.find(s => s.key === chart.key);
+    const annotations = [];
+    if (strat && strat.p_value !== null) {{
+      annotations.push({{
+        text: `p = ${{strat.p_value.toFixed(4)}}${{strat.significant ? ' *' : ''}}`,
+        xref: 'paper', yref: 'paper', x: 0.98, y: 0.98,
+        showarrow: false, font: {{ size: 12, color: strat.significant ? '#F44336' : '#888' }},
+      }});
+    }}
+
+    Plotly.newPlot(chartId, traces, {{
+      margin: {{ l: 60, r: 20, t: 10, b: 30 }},
+      yaxis: {{ title: chart.unit }},
+      showlegend: false,
+      shapes: shapes,
+      annotations: annotations,
+    }}, {{ responsive: true, displayModeBar: false }});
+  }});
+}}
 
 const TECH_COLORS = {{}};
 const TECH_PALETTE = ['#26A69A', '#EF5350', '#5C6BC0', '#FFA726', '#66BB6A'];

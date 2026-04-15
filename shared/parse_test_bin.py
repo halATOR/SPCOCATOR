@@ -5,11 +5,8 @@ Parse OMNIcheck test .bin files (V1 and V2).
 Extracts:
 - Header: unit ID, date, time, technician (both V1/V2)
 - MAC address from embedded cal trailer (both V1/V2)
+- Protocol A orifice WOB values at 10/20/35/50/65 LPM (unrounded, both V1/V2)
 - V2 WOB correction summaries: Total WOB Avg at NFPA 40, ISO High, NFPA 103
-
-Does NOT extract orifice WOB, leak, or volume display values — those are
-computed by LabVIEW and not stored as dedicated fields. Use PDF extraction
-for those values.
 """
 
 import struct
@@ -95,6 +92,30 @@ def parse_test_bin(filepath: str) -> dict:
 
     # MAC from cal trailer
     result["mac"] = _find_mac(data)
+
+    # Protocol A orifice WOB values: 5 doubles at header_end + 215
+    WOB_A_OFFSET = 215
+    wob_a_start = r.pos + WOB_A_OFFSET
+    if wob_a_start + 40 <= len(data):
+        wob_a_vals = [struct.unpack(">d", data[wob_a_start + i * 8:wob_a_start + i * 8 + 8])[0] for i in range(5)]
+        if (0.03 < wob_a_vals[0] < 0.15 and wob_a_vals[0] < wob_a_vals[1] < wob_a_vals[2] < wob_a_vals[3] < wob_a_vals[4]):
+            result["wob_a_10"] = wob_a_vals[0]
+            result["wob_a_20"] = wob_a_vals[1]
+            result["wob_a_35"] = wob_a_vals[2]
+            result["wob_a_50"] = wob_a_vals[3]
+            result["wob_a_65"] = wob_a_vals[4]
+
+    # Protocol B orifice WOB values: after A(40 bytes) + config(40 bytes) + 0x01 flag
+    # Structure: [0x01][B105 double][0x01 0x01][B65 double][B85 double]
+    wob_b_start = wob_a_start + 80  # skip A block + config block
+    if wob_b_start + 27 <= len(data) and data[wob_b_start] == 0x01:
+        b105 = struct.unpack(">d", data[wob_b_start + 1:wob_b_start + 9])[0]
+        b65 = struct.unpack(">d", data[wob_b_start + 11:wob_b_start + 19])[0]
+        b85 = struct.unpack(">d", data[wob_b_start + 19:wob_b_start + 27])[0]
+        if 0.4 < b65 < 0.9 and 0.8 < b85 < 1.3 and 1.3 < b105 < 2.0:
+            result["wob_b_65"] = b65
+            result["wob_b_85"] = b85
+            result["wob_b_105"] = b105
 
     # Detect V1 vs V2
     is_v2 = len(data) > V2_SIZE_THRESHOLD

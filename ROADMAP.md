@@ -1,7 +1,9 @@
 # SPCOCATOR Roadmap — Phased Expansion
 
+Last updated: 2026-04-15
+
 ## Current State
-Single-module SPC dashboard for OMNIcheck final inspection data extracted from PDFs. 37 units, 11 metrics, self-contained HTML output. Repo: halATOR/SPCOCATOR.
+Multi-module QA data platform. Final inspection SPC dashboard complete (37 units, 11 metrics). Bin parsing and cal cert generator complete. Auto-watcher code-complete but not deployed. Receipt inspection module in active development. Repo: halATOR/SPCOCATOR.
 
 ---
 
@@ -110,24 +112,41 @@ ATORcloud (WD MyCloud NAS)
 
 ## Phase 4: Receipt + In-Process Inspection
 
+**Status: IN PROGRESS** (receipt inspection); NOT STARTED (in-process)
+
 **Goal:** Extend SPCOCATOR to track incoming material quality and in-process checks.
 
-### What we know
+### Receipt Inspection — What we know (as of 2026-04-15)
 - Data is in **fillable PDF AcroForms** (field values extractable programmatically — no OCR)
-- **Receipt inspection:** per-component/incoming-material, NOT per-OMNIcheck unit. Different part numbers, different metrics per part.
-- **In-process inspection:** format TBD
-- Data access currently limited — user working on connectivity
+- **Data access resolved:** Forms on mounted OC drive at `/Volumes/OC/OC QA Reports/Receipt Inspection QA Forms/Completed QA Forms/Dimensional/`
+- **21 completed forms** (Oct 2025 – Mar 2026), 5 active part numbers
+- **Master template:** `/Volumes/OC/Receipt Inspection Form_Dimensional Master.pdf` (QAF-009-005)
+- **7 part numbers defined:** Trachea Base, Top Hat, Piston Cap, Piston Body, Piston Housing, 10mm Linear Shaft, Lead Screw
+- **100% inspection** currently; sampling plans planned once data is sufficient
+- **1 supplier per part** (3–4 major suppliers total)
+- **Spec limits from embedded drawings** in master template
+- **Known issue:** Metrics on form have drifted from current drawings; using drawing specs as baseline for v1
+- **Non-numeric values:** FT (fit test), FC (fit check), fail, n/a — mixed with numeric dimensional data
+- **Multi-page forms:** "Add Page" button creates additional data pages with `P{N}.Point of Inspection...` field naming
+- **Full spec:** `RECEIPT_INSPECTION_SPEC.md`
 
-### Tasks (deferred until data is accessible)
-1. **Obtain sample AcroForm PDFs** — extract field names programmatically to understand schema
-2. **Design receipt inspection data model** — part number, supplier, metrics vary by part
-3. **Write AcroForm parser** — `modules/receipt_inspection/parse_acroform.py` using PyMuPDF or pikepdf
-4. **Receipt SPC dashboard** — separate tab or separate HTML, grouped by part number
-5. **In-process inspection** — same approach once format is understood
+### Architecture Decision
+- **Separate HTML dashboard** (not tab in existing dashboard) — data model is fundamentally different (part-centric vs unit-centric)
+- **Shared navigation bar** between final inspection and receipt inspection dashboards
+- **Cross-part summary** with drill-down to per-part I-MR charts
+
+### Tasks
+1. ~~Obtain sample AcroForm PDFs~~ — **DONE** (21 forms on OC drive)
+2. ~~Design receipt inspection data model~~ — **DONE** (spec written)
+3. **Write AcroForm parser** — `modules/receipt_inspection/extract_receipt.py`
+4. **Generate receipt SPC dashboard** — `modules/receipt_inspection/generate_receipt_dashboard.py`
+5. **Add shared nav bar** to both dashboards
+6. **In-process inspection** — format TBD, deferred
 
 ### Dependencies
-- Access to the receipt/in-process inspection PDFs
-- Understanding of which metrics matter and what the spec limits are per part
+- ~~Access to the receipt/in-process inspection PDFs~~ **RESOLVED**
+- ~~Understanding of which metrics matter and what the spec limits are per part~~ **RESOLVED (from drawings)**
+- Updated dimension list from user (nice-to-have, not blocking v1)
 
 ---
 
@@ -164,8 +183,9 @@ SPCOCATOR/
 
 ---
 
-## Priority Order
-1. **Phase 1** — .bin parsing (highest value: new metrics, failure data, WOB prediction model)
-2. **Phase 2** — Cal certs (customer-facing deliverable, revenue-adjacent)
-3. **Phase 3** — Auto-watcher (operational efficiency, depends on Phases 1+2 being stable)
-4. **Phase 4** — Receipt/in-process (blocked on data access)
+## Priority Order (updated 2026-04-15)
+1. ~~**Phase 1** — .bin parsing~~ **DONE**
+2. ~~**Phase 2** — Cal certs~~ **DONE**
+3. **Phase 4** — Receipt inspection dashboard (actively building)
+4. **Phase 3** — Auto-watcher deployment (code done, blocked on cal template + ATORcloud paths)
+5. **Phase 4b** — In-process inspection (deferred, format TBD)

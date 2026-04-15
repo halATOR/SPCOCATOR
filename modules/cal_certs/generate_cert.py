@@ -25,7 +25,7 @@ from modules.cal_certs.parse_cal import parse_cal_file
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 EQUIPMENT_PATH = Path(__file__).resolve().parent / "equipment.json"
 MAC_MAP_PATH = PROJECT_DIR / "data" / "mac_serial_map.json"
-OUTPUT_DIR = PROJECT_DIR / "output" / "cal_certs"
+OUTPUT_DIR = Path("/Volumes/OC/QMS/Calibration Documentation")
 
 # Sensor display names and ordering
 SENSOR_MAP = [
